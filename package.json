@@ -1,0 +1,25 @@
+{
+  "name": "rascript",
+  "displayName": "RAScript",
+  "description": "RetroAchievements development scripting language",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "rascript",
+      "aliases": ["RAScript", "rascript"],
+      "extensions": [".rascript"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "rascript",
+      "scopeName": "source.rascript",
+      "path": "./syntaxes/rascript.tmLanguage.json"
+    }]
+  }
+}
