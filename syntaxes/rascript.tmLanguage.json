@@ -54,7 +54,7 @@
         },
         "function": {
             "patterns": [{
-                "name": "keyword.function.rascript",
+                "name": "entity.name.function.rascript",
                 "match": "\\b(function)\\b"
             }]
         },

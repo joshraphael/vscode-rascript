@@ -1,1 +1,6 @@
+bin/
+out/
+dist/
+node_modules/
+.vscode-test/
 *.rascript
