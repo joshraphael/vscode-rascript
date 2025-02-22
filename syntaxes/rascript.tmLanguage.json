@@ -51,15 +51,15 @@
                     "name": "comment.block.rascript"
                 },
                 {
-					"begin": "//",
-					"beginCaptures": {
-						"0": {
-							"name": "punctuation.definition.comment.single.rascript"
-						}
-					},
-					"end": "$",
+                    "begin": "//",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.single.rascript"
+                        }
+                    },
+                    "end": "$",
                     "name": "comment.line.double-slash.rascript"
-				}
+                }
             ]
         },
         "keywords": {
@@ -96,35 +96,35 @@
                     "match": "(\\w+)\\s*\\(([^\\(\\)]*)\\)",
                     "captures": {
                         "1": {
-							"patterns": [
+                            "patterns": [
                                 {
                                     "match": ".+[\\s]+.+",
-							        "name": "invalid.illegal.identifier.rascript"
+                                    "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
                                     "match": "(?:.*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\,\\.\\<\\>\\/\\?]+.*)",
-							        "name": "invalid.illegal.identifier.rascript"
+                                    "name": "invalid.illegal.identifier.rascript"
                                 },
-						        {
-							        "match": "[0-9][a-zA-Z0-9]*",
-							        "name": "invalid.illegal.identifier.rascript"
-						        },
-						        {
-							       "match": "\\w+",
-							       "name": "entity.name.function.rascript"
-						        }
-					        ]
-						},
+                                {
+                                    "match": "[0-9][a-zA-Z0-9]*",
+                                    "name": "invalid.illegal.identifier.rascript"
+                                },
+                                {
+                                   "match": "\\w+",
+                                   "name": "entity.name.function.rascript"
+                                }
+                            ]
+                        },
                         "2": {
                             "patterns": [
                                 {
                                     "match": "(?:[a-zA-Z][a-zA-Z0-9]*)",
-							        "name": "variable.parameter.rascript"
+                                    "name": "variable.parameter.rascript"
                                 },
                                 {
                                     "include": "#strings"
                                 }
-					        ]
+                            ]
                         }
                     }
                 }
@@ -139,44 +139,44 @@
                             "name": "keyword.function.rascript"
                         },
                         "2": {
-							"patterns": [
+                            "patterns": [
                                 {
                                     "match": ".+[\\s]+.+",
-							        "name": "invalid.illegal.identifier.rascript"
+                                    "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
                                     "match": "(?:.*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\,\\.\\<\\>\\/\\?]+.*)",
-							        "name": "invalid.illegal.identifier.rascript"
+                                    "name": "invalid.illegal.identifier.rascript"
                                 },
-						        {
-							        "match": "[0-9][a-zA-Z0-9]*",
-							        "name": "invalid.illegal.identifier.rascript"
-						        },
-						        {
-							       "match": "\\w+",
-							       "name": "entity.name.function.rascript"
-						        }
-					        ]
-						},
+                                {
+                                    "match": "[0-9][a-zA-Z0-9]*",
+                                    "name": "invalid.illegal.identifier.rascript"
+                                },
+                                {
+                                   "match": "\\w+",
+                                   "name": "entity.name.function.rascript"
+                                }
+                            ]
+                        },
                         "3": {
                             "patterns": [
                                 {
                                     "match": "(?:[a-zA-Z0-9]+[\\s]+[a-zA-Z0-9]+)",
-							        "name": "invalid.illegal.identifier.rascript"
+                                    "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
                                     "match": "(?:[a-zA-Z0-9]*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\.\\<\\>\\/\\?]+[a-zA-Z0-9]*)",
-							        "name": "invalid.illegal.identifier.rascript"
+                                    "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
-							        "match": "(?:[0-9][a-zA-Z0-9]*)",
-							        "name": "invalid.illegal.identifier.rascript"
-						        },
+                                    "match": "(?:[0-9][a-zA-Z0-9]*)",
+                                    "name": "invalid.illegal.identifier.rascript"
+                                },
                                 {
                                     "match": "(?:[a-zA-Z][a-zA-Z0-9]*)",
-							        "name": "variable.parameter.rascript"
+                                    "name": "variable.parameter.rascript"
                                 }
-					        ]
+                            ]
                         }
                     }
                 }
@@ -192,7 +192,7 @@
                             "patterns": [
                                 {
                                     "match": "(?:\\w+)",
-							        "name": "variable.other.assignment.rascript"
+                                    "name": "variable.other.assignment.rascript"
                                 }
                             ]
                         },
@@ -200,32 +200,32 @@
                             "patterns": [
                                 {
                                     "match": ".+[\\s]+.+",
-							        "name": "invalid.illegal.identifier.rascript"
+                                    "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
                                     "match": "(?:.*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\,\\.\\<\\>\\/\\?]+.*)",
-							        "name": "invalid.illegal.identifier.rascript"
+                                    "name": "invalid.illegal.identifier.rascript"
                                 },
-						        {
-							        "match": "[0-9][a-zA-Z0-9]*",
-							        "name": "invalid.illegal.identifier.rascript"
-						        },
-						        {
-							       "match": "\\w+",
-							       "name": "entity.name.function.rascript"
-						        }
+                                {
+                                    "match": "[0-9][a-zA-Z0-9]*",
+                                    "name": "invalid.illegal.identifier.rascript"
+                                },
+                                {
+                                   "match": "\\w+",
+                                   "name": "entity.name.function.rascript"
+                                }
                             ]
                         },
                         "3": {
                             "patterns": [
                                 {
                                     "match": "(?:[a-zA-Z][a-zA-Z0-9]*)",
-							        "name": "variable.parameter.rascript"
+                                    "name": "variable.parameter.rascript"
                                 },
                                 {
                                     "include": "#strings"
                                 }
-					        ]
+                            ]
                         }
                     }
                 },
@@ -237,7 +237,7 @@
                             "patterns": [
                                 {
                                     "match": "(?:\\w+)",
-							        "name": "variable.other.assignment.rascript"
+                                    "name": "variable.other.assignment.rascript"
                                 }
                             ]
                         },
