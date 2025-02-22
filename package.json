@@ -1,7 +1,7 @@
 {
   "name": "rascript",
   "displayName": "RAScript",
-  "description": "RetroAchievements development scripting language",
+  "description": "RetroAchievements development scripting language support for Visual Studio Code",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.97.0"
@@ -12,12 +12,6 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "rascript.helloWorld",
-        "title": "Hello World"
-      }
-    ],
     "languages": [{
       "id": "rascript",
       "aliases": ["RAScript", "rascript"],
