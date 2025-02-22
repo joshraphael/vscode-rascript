@@ -10,13 +10,19 @@
         "statements": {
             "patterns": [
                 {
-                    "include": "#function-groups"
+                    "include": "#function-definitions"
+                },
+                {
+                    "include": "#function-calls"
                 },
                 {
                     "include": "#keywords"
                 },
                 {
                     "include": "#builtin-functions"
+                },
+                {
+                    "include": "#variables"
                 },
                 {
                     "include": "#variables"
@@ -84,7 +90,47 @@
                 }
             ]
         },
-        "function-groups": {
+        "function-calls": {
+            "patterns": [
+                {
+                    "match": "(\\w+)\\s*\\(([^\\(\\)]*)\\)",
+                    "captures": {
+                        "1": {
+							"patterns": [
+                                {
+                                    "match": ".+[\\s]+.+",
+							        "name": "invalid.illegal.identifier.rascript"
+                                },
+                                {
+                                    "match": "(?:.*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\,\\.\\<\\>\\/\\?]+.*)",
+							        "name": "invalid.illegal.identifier.rascript"
+                                },
+						        {
+							        "match": "[0-9][a-zA-Z0-9]*",
+							        "name": "invalid.illegal.identifier.rascript"
+						        },
+						        {
+							       "match": "\\w+",
+							       "name": "entity.name.function.rascript"
+						        }
+					        ]
+						},
+                        "2": {
+                            "patterns": [
+                                {
+                                    "match": "(?:[a-zA-Z][a-zA-Z0-9]*)",
+							        "name": "variable.parameter.rascript"
+                                },
+                                {
+                                    "include": "#strings"
+                                }
+					        ]
+                        }
+                    }
+                }
+            ]
+        },
+        "function-definitions": {
             "patterns": [
                 {
                     "match": "(\\bfunction\\b)\\s*(\\w+)\\s*\\(([^\\(\\)]*)\\)",
@@ -139,7 +185,8 @@
         "variables": {
             "patterns": [
                 {
-                    "match": "(\\w+)\\s*=\\s*([^\\s]*)",
+                    "comment": "function call variable (same definition as #function-calls)",
+                    "match": "(\\w+)\\s*=\\s*(\\w+)\\s*\\(([^\\(\\)]*)\\)",
                     "captures": {
                         "1": {
                             "patterns": [
@@ -152,10 +199,55 @@
                         "2": {
                             "patterns": [
                                 {
-                                    "include": "#numbers"
+                                    "match": ".+[\\s]+.+",
+							        "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
+                                    "match": "(?:.*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\,\\.\\<\\>\\/\\?]+.*)",
+							        "name": "invalid.illegal.identifier.rascript"
+                                },
+						        {
+							        "match": "[0-9][a-zA-Z0-9]*",
+							        "name": "invalid.illegal.identifier.rascript"
+						        },
+						        {
+							       "match": "\\w+",
+							       "name": "entity.name.function.rascript"
+						        }
+                            ]
+                        },
+                        "3": {
+                            "patterns": [
+                                {
+                                    "match": "(?:[a-zA-Z][a-zA-Z0-9]*)",
+							        "name": "variable.parameter.rascript"
+                                },
+                                {
+                                    "include": "#strings"
+                                }
+					        ]
+                        }
+                    }
+                },
+                {
+                    "comment": "boolean variables",
+                    "match": "(\\w+)\\s*=\\s*(\\w*)",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "(?:\\w+)",
+							        "name": "variable.other.assignment.rascript"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "patterns": [
+                                {
                                     "include": "#boolean"
+                                },
+                                {
+                                    "include": "#numbers"
                                 },
                                 {
                                     "include": "#strings"
@@ -203,15 +295,10 @@
             }]
         },
         "strings": {
-            "name": "string.quoted.double.rascript",
-            "begin": "\"",
-            "end": "\"",
-            "patterns": [
-                {
-                    "name": "constant.character.escape.rascript",
-                    "match": "\\\\."
-                }
-            ]
+            "patterns": [{
+                "name": "string.quoted.double.rascript",
+                "match": "(?:\".*?\")"
+            }]
         }
     },
     "scopeName": "source.rascript"
