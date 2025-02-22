@@ -10,31 +10,31 @@
         "statements": {
             "patterns": [
                 {
-                    "include": "#function-definitions"
+                    "include": "#controls"
                 },
                 {
-                    "include": "#function-calls"
+                    "include": "#booleans"
                 },
                 {
-                    "include": "#keywords"
-                },
-                {
-                    "include": "#builtin-functions"
-                },
-                {
-                    "include": "#variables"
-                },
-                {
-                    "include": "#variables"
+                    "include": "#strings"
                 },
                 {
                     "include": "#numbers"
                 },
                 {
-                    "include": "#boolean"
+                    "include": "#function-definitions"
                 },
                 {
-                    "include": "#strings"
+                    "include": "#function-names"
+                },
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#variable-assignment"
+                },
+                {
+                    "include": "#variable-other"
                 }
             ]
         },
@@ -59,74 +59,6 @@
                     },
                     "end": "$",
                     "name": "comment.line.double-slash.rascript"
-                }
-            ]
-        },
-        "keywords": {
-            "patterns": [
-                {
-                    "name": "keyword.function.rascript",
-                    "match": "\\bfunction\\b"
-                },
-                {
-                    "name": "keyword.control.rascript",
-                    "match": "\\b(if|else|for|in|return)\\b"
-                }
-            ]
-        },
-        "builtin-functions": {
-            "patterns": [
-                {
-                    "name": "entity.name.function.rascript",
-                    "match": "\\b(byte|word|tbyte|dword|bit0|bit1|bit2|bit3|bit4|bit5|bit6|bit7|bit|low4|high4|bitcount|word_be|tbyte_be|dword_be|float|mbf32|mbf32_le|double32|double32_be|prev|prior|bcd|repeated|once|tally|never|unless|measured|trigger_when|disable_when|always_true|always_false|format|substring|length|range|array_map|array_contains|array_push|array_pop|dictionary_contains_key|any_of|all_of|none_of|sum_of|tally_of|assert|achievement|rich_presence_display|rich_presence_value|rich_presence_lookup|rich_presence_ascii_string_lookup|rich_presence_macro|rich_presence_conditional_display|leaderboard)\\b"
-                }
-            ]
-        },
-        "function": {
-            "patterns": [
-                {
-                    "name": "keyword.function.rascript",
-                    "match": "\\b(function)\\b"
-                }
-            ]
-        },
-        "function-calls": {
-            "patterns": [
-                {
-                    "match": "(\\w+)\\s*\\(([^\\(\\)]*)\\)",
-                    "captures": {
-                        "1": {
-                            "patterns": [
-                                {
-                                    "match": ".+[\\s]+.+",
-                                    "name": "invalid.illegal.identifier.rascript"
-                                },
-                                {
-                                    "match": "(?:.*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\,\\.\\<\\>\\/\\?]+.*)",
-                                    "name": "invalid.illegal.identifier.rascript"
-                                },
-                                {
-                                    "match": "[0-9][a-zA-Z0-9]*",
-                                    "name": "invalid.illegal.identifier.rascript"
-                                },
-                                {
-                                   "match": "\\w+",
-                                   "name": "entity.name.function.rascript"
-                                }
-                            ]
-                        },
-                        "2": {
-                            "patterns": [
-                                {
-                                    "match": "(?:[a-zA-Z][a-zA-Z0-9]*)",
-                                    "name": "variable.parameter.rascript"
-                                },
-                                {
-                                    "include": "#strings"
-                                }
-                            ]
-                        }
-                    }
                 }
             ]
         },
@@ -182,24 +114,23 @@
                 }
             ]
         },
-        "variables": {
+        "controls": {
             "patterns": [
                 {
-                    "comment": "function call variable (same definition as #function-calls)",
-                    "match": "(\\w+)\\s*=\\s*(\\w+)\\s*\\(([^\\(\\)]*)\\)",
+                    "name": "keyword.control.rascript",
+                    "match": "\\b(if|else|for|in|return)\\b"
+                }
+            ]
+        },
+        "function-names": {
+            "patterns": [
+                {
+                    "match": "(\\w+)\\s*\\(",
                     "captures": {
                         "1": {
                             "patterns": [
                                 {
-                                    "match": "(?:\\w+)",
-                                    "name": "variable.other.assignment.rascript"
-                                }
-                            ]
-                        },
-                        "2": {
-                            "patterns": [
-                                {
-                                    "match": ".+[\\s]+.+",
+                                    "match": "\\w+[\\s]+\\w+",
                                     "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
@@ -215,23 +146,16 @@
                                    "name": "entity.name.function.rascript"
                                 }
                             ]
-                        },
-                        "3": {
-                            "patterns": [
-                                {
-                                    "match": "(?:[a-zA-Z][a-zA-Z0-9]*)",
-                                    "name": "variable.parameter.rascript"
-                                },
-                                {
-                                    "include": "#strings"
-                                }
-                            ]
                         }
                     }
-                },
+                }
+            ]
+        },
+        "variable-assignment": {
+            "patterns": [
                 {
-                    "comment": "boolean variables",
-                    "match": "(\\w+)\\s*=\\s*(\\w*)",
+                    "comment": "function call variable (same definition as #function-calls)",
+                    "match": "(\\w+)\\s*=",
                     "captures": {
                         "1": {
                             "patterns": [
@@ -240,35 +164,28 @@
                                     "name": "variable.other.assignment.rascript"
                                 }
                             ]
-                        },
-                        "2": {
+                        }
+                    }
+                }
+            ]
+        },
+        "variable-other": {
+            "patterns": [
+                {
+                    "comment": "function call variable (same definition as #function-calls)",
+                    "match": "(\\w+)",
+                    "captures": {
+                        "1": {
                             "patterns": [
                                 {
-                                    "include": "#boolean"
-                                },
-                                {
-                                    "include": "#numbers"
-                                },
-                                {
-                                    "include": "#strings"
+                                    "match": "(?:\\w+)",
+                                    "name": "variable.other.rascript"
                                 }
                             ]
                         }
                     }
                 }
             ]
-        },
-        "control": {
-            "patterns": [{
-                "name": "keyword.control.rascript",
-                "match": "\\b(if|else|for|in|return)\\b"
-            }]
-        },
-        "reserved": {
-            "patterns": [{
-                "name": "entity.name.function.rascript",
-                "match": "\\b(byte|word|tbyte|dword|bit0|bit1|bit2|bit3|bit4|bit5|bit6|bit7|bit|low4|high4|bitcount|word_be|tbyte_be|dword_be|float|mbf32|mbf32_le|double32|double32_be|prev|prior|bcd|repeated|once|tally|never|unless|measured|trigger_when|disable_when|always_true|always_false|format|substring|length|range|array_map|array_contains|array_push|array_pop|dictionary_contains_key|any_of|all_of|none_of|sum_of|tally_of|assert|achievement|rich_presence_display|rich_presence_value|rich_presence_lookup|rich_presence_ascii_string_lookup|rich_presence_macro|rich_presence_conditional_display|leaderboard)\\b"
-            }]
         },
         "numbers": {
             "patterns": [
@@ -282,16 +199,10 @@
                 }
             ]
         },
-        "boolean": {
+        "booleans": {
             "patterns": [{
                 "name": "constant.language.boolean.rascript",
                 "match": "\\b(true|false)\\b"
-            }]
-        },
-        "parameters": {
-            "patterns": [{
-                "name": "variable.parameter.rascript",
-                "match": "\\b(transform|when|format|until|length|step|message|title|description|points|trigger|id|published|modified|badge|type|fallback|start|cancel|submit|value|lower_is_better|id)\\b"
             }]
         },
         "strings": {
