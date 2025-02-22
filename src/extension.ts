@@ -6,7 +6,20 @@ import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
 
-	const provider = vscode.languages.registerCompletionItemProvider(
+	const hover = vscode.languages.registerHoverProvider('rascript', {
+		provideHover(document: vscode.TextDocument, position: vscode.Position) {
+			const range = document.getWordRangeAtPosition(position);
+            const word = document.getText(range);
+
+            if (word == "array_push") {
+				return new vscode.Hover({
+                    language: "rascript",
+                    value: "array_push(array, value=always_false())"
+                });
+            }
+		}
+	})
+	const autocomplete = vscode.languages.registerCompletionItemProvider(
 		'rascript',
 		{
 			provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
@@ -84,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	);
 
-	context.subscriptions.push(provider);
+	context.subscriptions.push(autocomplete, hover);
 }
 
 function newBuiltInFunction(name: string) {
@@ -99,4 +112,7 @@ function newBuiltInFunction(name: string) {
 			
 	snippetCompletion.command = moveCursorCommand;
 	return snippetCompletion;
+}
+
+function onChange() {
 }
