@@ -3,31 +3,35 @@
     "name": "RAScript",
     "patterns": [
         {
-            "include": "#comments"
-        },
-        {
-            "include": "#function"
-        },
-        {
-            "include": "#control"
-        },
-        {
-            "include": "#reserved"
-        },
-        {
-            "include": "#numbers"
-        },
-        {
-            "include": "#boolean"
-        },
-        {
-            "include": "#parameters"
-        },
-        {
-            "include": "#strings"
+            "include": "#statements"
         }
     ],
     "repository": {
+        "statements": {
+            "patterns": [
+                {
+                    "include": "#function-groups"
+                },
+                {
+                    "include": "#keywords"
+                },
+                {
+                    "include": "#builtin-functions"
+                },
+                {
+                    "include": "#variables"
+                },
+                {
+                    "include": "#numbers"
+                },
+                {
+                    "include": "#boolean"
+                },
+                {
+                    "include": "#strings"
+                }
+            ]
+        },
         "comments": {
             "patterns": [
                 {
@@ -52,11 +56,115 @@
 				}
             ]
         },
+        "keywords": {
+            "patterns": [
+                {
+                    "name": "keyword.function.rascript",
+                    "match": "\\bfunction\\b"
+                },
+                {
+                    "name": "keyword.control.rascript",
+                    "match": "\\b(if|else|for|in|return)\\b"
+                }
+            ]
+        },
+        "builtin-functions": {
+            "patterns": [
+                {
+                    "name": "entity.name.function.rascript",
+                    "match": "\\b(byte|word|tbyte|dword|bit0|bit1|bit2|bit3|bit4|bit5|bit6|bit7|bit|low4|high4|bitcount|word_be|tbyte_be|dword_be|float|mbf32|mbf32_le|double32|double32_be|prev|prior|bcd|repeated|once|tally|never|unless|measured|trigger_when|disable_when|always_true|always_false|format|substring|length|range|array_map|array_contains|array_push|array_pop|dictionary_contains_key|any_of|all_of|none_of|sum_of|tally_of|assert|achievement|rich_presence_display|rich_presence_value|rich_presence_lookup|rich_presence_ascii_string_lookup|rich_presence_macro|rich_presence_conditional_display|leaderboard)\\b"
+                }
+            ]
+        },
         "function": {
-            "patterns": [{
-                "name": "entity.name.function.rascript",
-                "match": "\\b(function)\\b"
-            }]
+            "patterns": [
+                {
+                    "name": "keyword.function.rascript",
+                    "match": "\\b(function)\\b"
+                }
+            ]
+        },
+        "function-groups": {
+            "patterns": [
+                {
+                    "match": "(\\bfunction\\b)\\s*(\\w+)\\s*\\(([^\\(\\)]*)\\)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.function.rascript"
+                        },
+                        "2": {
+							"patterns": [
+                                {
+                                    "match": ".+[\\s]+.+",
+							        "name": "invalid.illegal.identifier.rascript"
+                                },
+                                {
+                                    "match": "(?:.*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\,\\.\\<\\>\\/\\?]+.*)",
+							        "name": "invalid.illegal.identifier.rascript"
+                                },
+						        {
+							        "match": "[0-9][a-zA-Z0-9]*",
+							        "name": "invalid.illegal.identifier.rascript"
+						        },
+						        {
+							       "match": "\\w+",
+							       "name": "entity.name.function.rascript"
+						        }
+					        ]
+						},
+                        "3": {
+                            "patterns": [
+                                {
+                                    "match": "(?:[a-zA-Z0-9]+[\\s]+[a-zA-Z0-9]+)",
+							        "name": "invalid.illegal.identifier.rascript"
+                                },
+                                {
+                                    "match": "(?:[a-zA-Z0-9]*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\.\\<\\>\\/\\?]+[a-zA-Z0-9]*)",
+							        "name": "invalid.illegal.identifier.rascript"
+                                },
+                                {
+							        "match": "(?:[0-9][a-zA-Z0-9]*)",
+							        "name": "invalid.illegal.identifier.rascript"
+						        },
+                                {
+                                    "match": "(?:[a-zA-Z][a-zA-Z0-9]*)",
+							        "name": "variable.parameter.rascript"
+                                }
+					        ]
+                        }
+                    }
+                }
+            ]
+        },
+        "variables": {
+            "patterns": [
+                {
+                    "match": "(\\w+)\\s*=\\s*([^\\s]*)",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "(?:\\w+)",
+							        "name": "variable.other.assignment.rascript"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "include": "#numbers"
+                                },
+                                {
+                                    "include": "#boolean"
+                                },
+                                {
+                                    "include": "#strings"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
         },
         "control": {
             "patterns": [{
@@ -91,10 +199,7 @@
         "parameters": {
             "patterns": [{
                 "name": "variable.parameter.rascript",
-                "match": "\\b(transform|when|format|until|length|step|message|title|description|points|trigger|id|published|modified|badge|type|fallback|start|cancel|submit|value|lower_is_better|id)\\b",
-                "settings": {
-                    "foreground": "#FF0000"
-                }
+                "match": "\\b(transform|when|format|until|length|step|message|title|description|points|trigger|id|published|modified|badge|type|fallback|start|cancel|submit|value|lower_is_better|id)\\b"
             }]
         },
         "strings": {
