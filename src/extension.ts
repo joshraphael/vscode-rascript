@@ -3,19 +3,46 @@
  *--------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import * as util from "util";
 
 export function activate(context: vscode.ExtensionContext) {
 
 	const hover = vscode.languages.registerHoverProvider('rascript', {
 		provideHover(document: vscode.TextDocument, position: vscode.Position) {
+
+			let words = [
+				newHoverText("byte", "// the 8-bit value at the specified address\n%s(address)"),
+				newHoverText("word", "// the 16-bit value at the specified address\n%s(address)"),
+				newHoverText("tbyte", "// the 24-bit value at the specified address\n%s(address)"),
+				newHoverText("dword", "// the 32-bit value at the specified address\n%s(address)"),
+				newHoverText("bit0", "// the least significant bit of the specified address\n%s(address)"),
+				newHoverText("bit1", "// the second least significant bit of the specified address\n%s(address)"),
+				newHoverText("bit2", "// the third least significant bit of the specified address\n%s(address)"),
+				newHoverText("bit3", "// the fourth least significant bit of the specified address\n%s(address)"),
+				newHoverText("bit4", "// the fifth least significant bit of the specified address\n%s(address)"),
+				newHoverText("bit5", "// the sixth least significant bit of the specified address\n%s(address)"),
+				newHoverText("bit6", "// the seventh least significant bit of the specified address\n%s(address)"),
+				newHoverText("bit7", "// the most significant bit of the specified address\n%s(address)"),
+				newHoverText("bit", "// the `index`th bit of the specified address (`index` must be between 0 and 31)\n%s(index, address)"),
+				newHoverText("low4", "// the four least significant bits of the specified address\n%s(address)"),
+				newHoverText("high4", "// the four most significant bits of the specified address\n%s(address)"),
+				newHoverText("bitcount", "// the number of non-zero bits at the specified address\n%s(address)"),
+			]
+			let text = document.getText();
+            let pattern = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
+			let m: RegExpExecArray | null;
+			while (m = pattern.exec(text)) {
+				let pos = document.positionAt(m.index)
+				let line = document.lineAt(pos)
+				console.log(line.text)
+			}
 			const range = document.getWordRangeAtPosition(position);
             const word = document.getText(range);
 
-            if (word == "array_push") {
-				return new vscode.Hover({
-                    language: "rascript",
-                    value: "array_push(array, value=always_false())"
-                });
+			for (let i = 0; i < words.length; i++) {
+                if (words[i].key == word) {
+				    return words[i].hover;
+				}
             }
 		}
 	})
@@ -23,6 +50,14 @@ export function activate(context: vscode.ExtensionContext) {
 		'rascript',
 		{
 			provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
+				let text = document.getText();
+                let pattern = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g;
+				let m: RegExpExecArray | null;
+				while (m = pattern.exec(text)) {
+					let pos = document.positionAt(m.index)
+					let line = document.lineAt(pos)
+					console.log(line.text)
+				}
 
 				// get all text until the `position` and check if it reads `console.`
 				// and if so then complete if `log`, `warn`, and `error`
@@ -101,7 +136,6 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function newBuiltInFunction(name: string) {
-	console.log("here")
 	const snippetCompletion = new vscode.CompletionItem(name);
 	snippetCompletion.insertText = new vscode.SnippetString(name + '()');
 	snippetCompletion.kind = vscode.CompletionItemKind.Function;
@@ -114,5 +148,18 @@ function newBuiltInFunction(name: string) {
 	return snippetCompletion;
 }
 
-function onChange() {
+interface HoverData {
+    key: string;
+    hover: vscode.Hover;
+}
+
+function newHoverText(key: string, fmtText: string): HoverData {
+	let text = util.format(fmtText, key);
+	return {
+		key: key,
+		hover: new vscode.Hover({
+			language: "rascript",
+			value: text
+		})
+	}
 }
