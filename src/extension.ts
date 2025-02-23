@@ -48,6 +48,9 @@ export function activate(context: vscode.ExtensionContext) {
 				newHoverText("measured", "// Parameters:\n//\n// `comparison` - condition that must be true\n//\n// `when` - (Optional) secondary condition that must be true\n//\n// `format` - (Optional) format of value `raw` or `percent`\n//\n// This adds a `Measured` flag to the comparison. If the `comparison` is repeated, the Measured value will be the current number of hits on the condition, and the measurement target will be the Hit Target for the condition. Otherwise, the Measured value will be the left side value and the measurement target will be the right side value (regardless of the comparison operation).\n//\n// When used in an achievement, Measurements are displayed in the overlay. Use the `when` parameter to specify a secondary condition that must be true for the Measured value to be reported (i.e. for achievements where the player must be using a specific character). If the `when` condition is false, the Measured value will be 0, regardless of the values in the associated memory. Both the `comparison` (and `when` condition if provided) must be true for the achievement to trigger.\n//\n// `format` may be set to `percent` to change the display in the overlay to report a percentage instead of the raw measured value (i.e. 75% instead of 3/4)\n//\n// When used in rich presence or leaderboards, the Measured value is captured and the measurement target is ignored.\n//\n// **Using with complex conditions**\n//\n// `comparison` may be a series of AND'd or OR'd conditions.\n// This will cause `repeated`, `once`, and `measured` to generate a series of OrNext and AndNext conditions, and `never` and `unless` will generate a series of ResetIf/PauseIf conditions.", "https://github.com/Jamiras/RATools/wiki/Trigger-Functions#measuredcomparison-whenalways_true-formatraw", "comparison", "when", "format"),
 				newHoverText("trigger_when", "// Parameters:\n//\n// `comparison` - condition that must be true\n//\n// This adds a `Trigger` flag to the comparison, which tells the runtime that the specified conditions are the last conditions that will be true for the achievement.\n// When all other logical conditions are true, the runtime may display an indicator on-screen to let the user know they're close to completing an achievement.\n// Should be used for tracking challenges, like defeating a boss without taking damage.", "https://github.com/Jamiras/RATools/wiki/Trigger-Functions#trigger_whencomparison", "comparison"),
 				newHoverText("disable_when", "// Parameters:\n//\n// `comparison` - condition that must be true\n//\n// `until` - (Optional) condition to reset the hit count\n//\n// This adds a `PauseIf` flag and a hit target to the comparison. If `comparison` is not a `repeated()` condition, the hit target will be 1, otherwise the hit target will come from the `repeated()` function call. When the hit target is met, the runtime will disable the achievement indefinitely. This is most often used to disable achievements while a cheat is active.\n//\n// If `until` is specified, it will generate a `ResetNextIf` condition attached to the `PauseIf`, which will clear the hit count when true, thereby re-enabling the achievement.", "https://github.com/Jamiras/RATools/wiki/Trigger-Functions#disable_whencomparison-untilalways_false", "comparison", "until"),
+				newHoverText("always_true", "// Defines the clause \"1==1\".\n// It is typically only used to move a PauseIf/ResetIf to an alt group:\n//\n`byte(0x1234) == 8 && (always_true() || (never(byte(0x2345) == 12) && unless(byte(0x3456) == 6)))`\n//\nThis allows the achievement (core group) to trigger while the `never` is paused by the `unless`.", "https://github.com/Jamiras/RATools/wiki/Built-in-Functions#always_true"),
+				newHoverText("always_false", "// Defines the clause \"0==1\".\n// It is typically used for constructing alt chains, as a variable must have an initial value:\n//\n// ```rascript\n// trigger = always_false()\n// for test in tests\n//     trigger = trigger || test\n// achievement(..., trigger = trigger)\n// ```\n//\n// If more than two alt groups exist, the `always_false` group will be removed from the final achievement code", "https://github.com/Jamiras/RATools/wiki/Built-in-Functions#always_false"),
+				newHoverText("format", "// Parameters:\n//\n// `format_string` - the format string template\n//\n// `parameters` - (Optional) the list of replacement values\n//\n// Builds a string by inserting parameters into placeholders in the format_string.\n//\n// For example:\n//\n// ```rascript\n// stage_names = {\n//     1: \"Downtown\"\n// }\n// stage_1_label = format(\"Stage {0} - {1}\", 1, stage_names[1])\n// ```\n//\n// Would set stage_1_label to \"Stage 1 - Downtown\"", "https://github.com/Jamiras/RATools/wiki/Built-in-Functions#formatformat_string-parameters", "format_string", "parameters"),
 			];
 			let text = document.getText();
             let pattern = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
@@ -173,23 +176,45 @@ function newHoverText(key: string, text: string, docUrl: string, ...args: string
 	let argStr = args.join(", ");
 	let commentLines = text.split(/\r?\n/);
 	let lines = [
-		util.format('```rascript\nfunction %s(%s)\n```', key, argStr),
+		util.format('```rascript\nfunction %s(%s)\n```', key, argStr)
 	]
 	if( text !== '') {
 		lines.push('---')
 	    let curr = ''
+		let codeBlock = false
 	    for (let i = 0; i < commentLines.length; i++) {
-		    let line = commentLines[i].replace(/^\/\/\s*/g, "")
-		    if( line === '' ) {
-			    lines.push(curr)
-			    curr = ''
-		    } else {
-			    curr = curr + " " + line
+		    let line = commentLines[i].replace(/^\/\//g, "")
+			if (line.startsWith(' ')) {
+				line = line.substring(1);
+			}
+			if (line.startsWith('```')) {
+				codeBlock = !codeBlock
+				if(codeBlock) {
+					curr = line
+				} else {
+					curr = curr + "\n" + line
+					lines.push(curr)
+					curr = ''
+				}
+				continue
+			}
+			if(codeBlock) {
+				curr = curr + "\n" + line
+			} else {
+		        if( line === '' ) {
+			        lines.push(curr)
+			        curr = ''
+		        } else {
+			        curr = curr + " " + line
+				}
 		    }
 	    }
 	    if( curr !== '' ) {
 		    lines.push(curr)
 	    }
+		if( codeBlock ) {
+			lines.push('```')
+		}
     }
 	if( docUrl !== '') {
 		lines.push('---')
