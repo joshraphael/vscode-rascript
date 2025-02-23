@@ -10,12 +10,15 @@ setup:
 	pnpm compile
 
 tag-patch:
+	npm run pretest
 	bash scripts/update.sh --patch
 
 tag-minor:
+	npm run pretest
 	bash scripts/update.sh --minor
 
 tag-major:
+	npm run pretest
 	bash scripts/update.sh --major
 
 publish:
