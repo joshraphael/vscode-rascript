@@ -2,7 +2,7 @@
   "name": "rascript",
   "displayName": "RAScript",
   "description": "RetroAchievements development scripting language support for Visual Studio Code",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "joshraphael",
   "repository": {
     "type": "git",
@@ -17,17 +17,26 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "languages": [{
-      "id": "rascript",
-      "aliases": ["RAScript", "rascript"],
-      "extensions": [".rascript"],
-      "configuration": "./language-configuration.json"
-    }],
-    "grammars": [{
-      "language": "rascript",
-      "scopeName": "source.rascript",
-      "path": "./syntaxes/rascript.tmLanguage.json"
-    }]
+    "languages": [
+      {
+        "id": "rascript",
+        "aliases": [
+          "RAScript",
+          "rascript"
+        ],
+        "extensions": [
+          ".rascript"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "rascript",
+        "scopeName": "source.rascript",
+        "path": "./syntaxes/rascript.tmLanguage.json"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
