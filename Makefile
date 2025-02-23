@@ -17,3 +17,6 @@ tag-minor:
 
 tag-major:
 	bash scripts/update.sh --major
+
+publish:
+	git push --tags origin main
