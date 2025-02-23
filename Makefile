@@ -8,3 +8,12 @@ setup:
 	rm -rf out/
 	npm install
 	pnpm compile
+
+tag-patch:
+	bash scripts/update.sh --patch
+
+tag-minor:
+	bash scripts/update.sh --minor
+
+tag-major:
+	bash scripts/update.sh --major
