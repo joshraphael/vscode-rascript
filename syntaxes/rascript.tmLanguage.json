@@ -154,7 +154,7 @@
         "variable-assignment": {
             "patterns": [
                 {
-                    "comment": "function call variable (same definition as #function-calls)",
+                    "comment": "left hand side of variable assignment",
                     "match": "(\\w+)\\s*=",
                     "captures": {
                         "1": {
@@ -172,7 +172,7 @@
         "variable-other": {
             "patterns": [
                 {
-                    "comment": "function call variable (same definition as #function-calls)",
+                    "comment": "different variables around the file being used, not assignment",
                     "match": "(\\w+)",
                     "captures": {
                         "1": {
