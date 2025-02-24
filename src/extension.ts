@@ -5,31 +5,31 @@ const G_FUNCTION_DEFINITION = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // kee
 const G_COMMENTS = new RegExp('^\/\/.*$', 'g');
 
 export function activate(context: vscode.ExtensionContext) {
-	const definitions = vscode.languages.registerDefinitionProvider('rascript', {
-		provideDefinition(document, position, token) {
-			let text = document.getText();
-			const range = document.getWordRangeAtPosition(position);
+    const definitions = vscode.languages.registerDefinitionProvider('rascript', {
+        provideDefinition(document, position, token) {
+            let text = document.getText();
+            const range = document.getWordRangeAtPosition(position);
             const word = document.getText(range);
             let m: RegExpExecArray | null;
-			let functionDefinitions = new Map<string, vscode.Position>();
+            let functionDefinitions = new Map<string, vscode.Position>();
             while (m = G_FUNCTION_DEFINITION.exec(text)) {
                 let pos = document.positionAt(m.index);
-				functionDefinitions.set(m[2], pos)
+                functionDefinitions.set(m[2], pos)
             }
-			if (functionDefinitions.has(word)) {
-				let pos = functionDefinitions.get(word)
-				if(pos !== undefined) {
-					let r = new vscode.Range(pos, pos)
-					const locLink: vscode.LocationLink = {
-						targetRange: r,
-						targetUri: document.uri,
-					};
-					return [locLink]
-				}
-			}
-			return null;
-		}
-	})
+            if (functionDefinitions.has(word)) {
+                let pos = functionDefinitions.get(word)
+                if(pos !== undefined) {
+                    let r = new vscode.Range(pos, pos)
+                    const locLink: vscode.LocationLink = {
+                        targetRange: r,
+                        targetUri: document.uri,
+                    };
+                    return [locLink]
+                }
+            }
+            return null;
+        }
+    })
 
     const hover = vscode.languages.registerHoverProvider('rascript', {
         provideHover(document: vscode.TextDocument, position: vscode.Position) {
@@ -81,23 +81,23 @@ export function activate(context: vscode.ExtensionContext) {
             let functionDefinitions = new Map<string, vscode.Position>();
             while (m = G_FUNCTION_DEFINITION.exec(text)) {
                 let pos = document.positionAt(m.index);
-				functionDefinitions.set(m[2], pos)
+                functionDefinitions.set(m[2], pos)
                 let comment = ''
-				if( pos.line > 0 ) { // dont look for comments if were at the top of the file
-					let offset = 1
-					// while not at the top of the file and the next line up is a comment
-					while(pos.line - offset >= 0) {
+                if( pos.line > 0 ) { // dont look for comments if were at the top of the file
+                    let offset = 1
+                    // while not at the top of the file and the next line up is a comment
+                    while(pos.line - offset >= 0) {
                         let line = document.lineAt(new vscode.Position(pos.line - offset, 0)).text
-						let isComment = G_COMMENTS.test(line)
+                        let isComment = G_COMMENTS.test(line)
                         G_COMMENTS.lastIndex = 0 // POS js
-						if(isComment) {
-						    comment = line + "\n" + comment
-						    offset = offset + 1
-						} else {
-							break;
-						}
-					}
-				}
+                        if(isComment) {
+                            comment = line + "\n" + comment
+                            offset = offset + 1
+                        } else {
+                            break;
+                        }
+                    }
+                }
                 words.push(newHoverText(m[2], comment, ""))
             }
             const range = document.getWordRangeAtPosition(position);
@@ -108,7 +108,7 @@ export function activate(context: vscode.ExtensionContext) {
                     return words[i].hover;
                 }
             }
-			return null;
+            return null;
         }
     });
     const autocomplete = vscode.languages.registerCompletionItemProvider(
