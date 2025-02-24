@@ -5,7 +5,40 @@
 import * as vscode from 'vscode';
 import * as util from "util";
 
+const G_FUNCTION_DEFINITION = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
+const G_FUNCTION_NAME = /(\w+)\s*\(/g
+
+interface FunctionDefinition {
+    name: string;
+    position: vscode.Position;
+}
+
 export function activate(context: vscode.ExtensionContext) {
+	const definitions = vscode.languages.registerDefinitionProvider('rascript', {
+		provideDefinition(document, position, token) {
+			let text = document.getText();
+			const range = document.getWordRangeAtPosition(position);
+            const word = document.getText(range);
+            let m: RegExpExecArray | null;
+			let functionDefinitions = new Map<string, vscode.Position>();
+            while (m = G_FUNCTION_DEFINITION.exec(text)) {
+                let pos = document.positionAt(m.index);
+				functionDefinitions.set(m[2], pos)
+            }
+			if (functionDefinitions.has(word)) {
+				let pos = functionDefinitions.get(word)
+				if(pos !== undefined) {
+					let r = new vscode.Range(pos, pos)
+					const locLink: vscode.LocationLink = {
+						targetRange: r,
+						targetUri: document.uri,
+					};
+					return [locLink]
+				}
+			}
+			return null;
+		}
+	})
 
     const hover = vscode.languages.registerHoverProvider('rascript', {
         provideHover(document: vscode.TextDocument, position: vscode.Position) {
@@ -53,12 +86,11 @@ export function activate(context: vscode.ExtensionContext) {
                 newHoverText("format", "// Parameters:\n//\n// `format_string` - the format string template\n//\n// `parameters` - (Optional) the list of replacement values\n//\n// Builds a string by inserting parameters into placeholders in the format_string.\n//\n// For example:\n//\n// ```rascript\n// stage_names = {\n//     1: \"Downtown\"\n// }\n// stage_1_label = format(\"Stage {0} - {1}\", 1, stage_names[1])\n// ```\n//\n// Would set stage_1_label to \"Stage 1 - Downtown\"", "https://github.com/Jamiras/RATools/wiki/Built-in-Functions#formatformat_string-parameters", "format_string", "parameters"),
             ];
             let text = document.getText();
-            let pattern = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
             let m: RegExpExecArray | null;
-            while (m = pattern.exec(text)) {
+            while (m = G_FUNCTION_DEFINITION.exec(text)) {
                 let pos = document.positionAt(m.index);
                 let line = document.lineAt(pos);
-                console.log(line.text);
+                // console.log(line.text);
             }
             const range = document.getWordRangeAtPosition(position);
             const word = document.getText(range);
@@ -68,6 +100,7 @@ export function activate(context: vscode.ExtensionContext) {
                     return words[i].hover;
                 }
             }
+			return null;
         }
     });
     const autocomplete = vscode.languages.registerCompletionItemProvider(
@@ -75,12 +108,10 @@ export function activate(context: vscode.ExtensionContext) {
         {
             provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
                 let text = document.getText();
-                let pattern = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g;
                 let m: RegExpExecArray | null;
-                while (m = pattern.exec(text)) {
+                while (m = G_FUNCTION_DEFINITION.exec(text)) {
                     let pos = document.positionAt(m.index);
                     let line = document.lineAt(pos);
-                    console.log(line.text);
                 }
 
                 return [
@@ -151,7 +182,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     );
 
-    context.subscriptions.push(autocomplete, hover);
+    context.subscriptions.push(autocomplete, hover, definitions);
 }
 
 function newBuiltInFunction(name: string) {
