@@ -14,22 +14,22 @@ export function activate(context: vscode.ExtensionContext) {
             let functionDefinitions = new Map<string, vscode.Position>();
             while (m = G_FUNCTION_DEFINITION.exec(text)) {
                 let pos = document.positionAt(m.index);
-                functionDefinitions.set(m[2], pos)
+                functionDefinitions.set(m[2], pos);
             }
             if (functionDefinitions.has(word)) {
-                let pos = functionDefinitions.get(word)
+                let pos = functionDefinitions.get(word);
                 if(pos !== undefined) {
-                    let r = new vscode.Range(pos, pos)
+                    let r = new vscode.Range(pos, pos);
                     const locLink: vscode.LocationLink = {
                         targetRange: r,
                         targetUri: document.uri,
                     };
-                    return [locLink]
+                    return [locLink];
                 }
             }
             return null;
         }
-    })
+    });
 
     const hover = vscode.languages.registerHoverProvider('rascript', {
         provideHover(document: vscode.TextDocument, position: vscode.Position) {
@@ -81,24 +81,25 @@ export function activate(context: vscode.ExtensionContext) {
             let functionDefinitions = new Map<string, vscode.Position>();
             while (m = G_FUNCTION_DEFINITION.exec(text)) {
                 let pos = document.positionAt(m.index);
-                functionDefinitions.set(m[2], pos)
-                let comment = ''
+                functionDefinitions.set(m[2], pos);
+                let comment = '';
                 if( pos.line > 0 ) { // dont look for comments if were at the top of the file
-                    let offset = 1
+                    let offset = 1;
                     // while not at the top of the file and the next line up is a comment
                     while(pos.line - offset >= 0) {
-                        let line = document.lineAt(new vscode.Position(pos.line - offset, 0)).text
-                        let isComment = G_COMMENTS.test(line)
-                        G_COMMENTS.lastIndex = 0 // POS js
+                        let line = document.lineAt(new vscode.Position(pos.line - offset, 0)).text;
+                        let isComment = G_COMMENTS.test(line);
+                        G_COMMENTS.lastIndex = 0; // POS js
                         if(isComment) {
-                            comment = line + "\n" + comment
-                            offset = offset + 1
+                            comment = line + "\n" + comment;
+                            offset = offset + 1;
                         } else {
                             break;
                         }
                     }
                 }
-                words.push(newHoverText(m[2], comment, ""))
+                let args = m[3].split(",").map(s => s.trim());
+                words.push(newHoverText(m[2], comment, "", ...args));
             }
             const range = document.getWordRangeAtPosition(position);
             const word = document.getText(range);
