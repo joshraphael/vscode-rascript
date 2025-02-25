@@ -1,9 +1,10 @@
 {
   "name": "rascript",
   "displayName": "RAScript",
-  "description": "RetroAchievements development scripting language support for Visual Studio Code",
+  "description": "The Visual Studio Code RAScript extension provides language support for the RATools scripting language.",
   "version": "0.0.3",
   "publisher": "joshraphael",
+  "icon": "assets/ra_big.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/joshraphael/vscode-rascript"
@@ -16,6 +17,7 @@
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
+  "browser": "./out/extension.js",
   "contributes": {
     "languages": [
       {
@@ -44,7 +46,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --max-warnings=0",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "browser": "vscode-test-web --extensionDevelopmentPath=. ."
   },
   "devDependencies": {
     "@types/vscode": "^1.97.0",
@@ -55,6 +58,7 @@
     "eslint": "^9.19.0",
     "typescript": "^5.7.3",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/test-web": "*"
   }
 }

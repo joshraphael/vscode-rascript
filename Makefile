@@ -23,3 +23,7 @@ tag-major: check
 
 publish:
 	git push --tags origin main
+
+browser:
+	npm run compile
+	npm run browser

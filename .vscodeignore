@@ -9,7 +9,9 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+**/.vscode-test-web.*
 scripts/**
 .github/**
 *.rascript
 Makefile
+webpack.config.js

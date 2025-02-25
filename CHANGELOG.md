@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Auto completion for user defined functions
 - Auto completion for user defined variables
 - Hover box for built-in functions: substring, length, range, array_push, array_pop, array_map, array_contains
+- Enable as web extension
 
 ### Changed
 

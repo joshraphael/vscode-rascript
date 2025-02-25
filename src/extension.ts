@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import * as util from "util";
 
 const G_FUNCTION_DEFINITION = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
 const G_COMMENTS = new RegExp('^\/\/.*$', 'g');
@@ -233,7 +232,7 @@ function newHoverText(key: string, text: string, docUrl: string, ...args: string
     let argStr = args.join(", ");
     let commentLines = text.split(/\r?\n/);
     let lines = [
-        util.format('```rascript\nfunction %s(%s)\n```', key, argStr)
+        `\`\`\`rascript\nfunction ${key}(${argStr})\n\`\`\``
     ];
     if( text !== '') {
         lines.push('---');
