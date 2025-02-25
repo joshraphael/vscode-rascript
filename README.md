@@ -1,8 +1,11 @@
+# <p align="center">![ra](assets/ra_big.png "Retro Achievements VSCode")<br>vscode-rascript</p>
+
 # RAScript extension for Visual Studio Code
 
 The Visual Studio Code RAScript extension provides language support for the [RATools](https://github.com/Jamiras/RATools) scripting language.
 
 [![GitHub License](https://img.shields.io/github/license/joshraphael/vscode-rascript)](https://github.com/joshraphael/vscode-rascript/blob/main/LICENSE)
+[![pipeline](https://github.com/joshraphael/vscode-rascript/actions/workflows/publish.yaml/badge.svg)](https://github.com/joshraphael/vscode-rascript/actions/workflows/publish.yaml)
 [![GitHub Tag](https://img.shields.io/github/v/tag/joshraphael/vscode-rascript)](https://github.com/joshraphael/vscode-rascript/tags)
 [![GitHub repo size](https://img.shields.io/github/repo-size/joshraphael/vscode-rascript)](https://github.com/joshraphael/vscode-rascript/archive/main.zip)
 
