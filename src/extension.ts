@@ -3,6 +3,7 @@ import * as util from "util";
 
 const G_FUNCTION_DEFINITION = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
 const G_COMMENTS = new RegExp('^\/\/.*$', 'g');
+const G_VARIABLES = /(\w+)\s*=/g;
 
 export function activate(context: vscode.ExtensionContext) {
     const definitions = vscode.languages.registerDefinitionProvider('rascript', {
@@ -116,14 +117,7 @@ export function activate(context: vscode.ExtensionContext) {
         'rascript',
         {
             provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
-                let text = document.getText();
-                let m: RegExpExecArray | null;
-                while (m = G_FUNCTION_DEFINITION.exec(text)) {
-                    let pos = document.positionAt(m.index);
-                    let line = document.lineAt(pos);
-                }
-
-                return [
+                let completionItems = [
                     newBuiltInFunction('byte'),
                     newBuiltInFunction('word'),
                     newBuiltInFunction('tbyte'),
@@ -186,7 +180,17 @@ export function activate(context: vscode.ExtensionContext) {
                     newBuiltInFunction('rich_presence_macro'),
                     newBuiltInFunction('rich_presence_conditional_display'),
                     newBuiltInFunction('leaderboard')
-                ];
+                ]
+                let text = document.getText();
+                let m: RegExpExecArray | null;
+                while (m = G_FUNCTION_DEFINITION.exec(text)) {
+                    completionItems.push(newBuiltInFunction(m[2]))
+                }
+                while (m = G_VARIABLES.exec(text)) {
+                    completionItems.push(newVariable(m[1]))
+                }
+
+                return completionItems;
             }
         }
     );
@@ -204,6 +208,12 @@ function newBuiltInFunction(name: string) {
     };
             
     snippetCompletion.command = moveCursorCommand;
+    return snippetCompletion;
+}
+
+function newVariable(name: string) {
+    const snippetCompletion = new vscode.CompletionItem(name, vscode.CompletionItemKind.Variable);
+
     return snippetCompletion;
 }
 
