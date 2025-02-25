@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hover box content to include comments rendered in markdown
 - Hover box content to include url
 - CHANGELOG to include previous versions changes
+- README.md improvements
 
 ### Removed
 
