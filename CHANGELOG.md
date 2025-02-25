@@ -5,14 +5,15 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [[0.0.4](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.0.4)] - yyyy-mm-dd
+## [[0.1.0](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.1.0)] - yyyy-mm-dd
 
-[diff](https://github.com/joshraphael/vscode-rascript/compare/v0.0.3...v0.0.4)
+[diff](https://github.com/joshraphael/vscode-rascript/compare/v0.0.3...v0.1.0)
 
 ### Added
 
 - Auto completion for user defined functions
 - Auto completion for user defined variables
+- Hover box for built-in functions: substring, length, range, array_push, array_pop, array_map, array_contains
 
 ### Changed
 

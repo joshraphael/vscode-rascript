@@ -9,16 +9,16 @@ setup:
 	npm install
 	pnpm compile
 
-tag-patch:
+check:
 	npm run pretest
+
+tag-patch: check
 	bash scripts/update.sh --patch
 
-tag-minor:
-	npm run pretest
+tag-minor: check
 	bash scripts/update.sh --minor
 
-tag-major:
-	npm run pretest
+tag-major: check
 	bash scripts/update.sh --major
 
 publish:
