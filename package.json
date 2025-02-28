@@ -17,7 +17,7 @@
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
-  "browser": "./out/extension.js",
+  "browser": "./dist/extension.js",
   "contributes": {
     "languages": [
       {
@@ -47,7 +47,7 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --max-warnings=0",
     "test": "vscode-test",
-    "browser": "vscode-test-web --extensionDevelopmentPath=. ."
+    "browser": "webpack --mode development && vscode-test-web --extensionDevelopmentPath=. ."
   },
   "devDependencies": {
     "@types/vscode": "^1.97.0",
@@ -59,6 +59,9 @@
     "typescript": "^5.7.3",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
-    "@vscode/test-web": "*"
+    "@vscode/test-web": "*",
+    "webpack": "^5.75.0",
+		"webpack-cli": "^5.0.1",
+    "ts-loader": "^7.0.5"
   }
 }
