@@ -270,7 +270,7 @@ function newHoverText(key: string, text: string, docUrl: string, ...args: string
                 continue;
             }
             if (line.startsWith('|')) {
-                line = line + "\n"
+                line = line + "\n";
             }
             if(codeBlock) {
                 curr = curr + "\n" + line;
