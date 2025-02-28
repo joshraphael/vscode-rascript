@@ -5,13 +5,13 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [[0.0.5](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.0.5)] - yyy-mm-dd
+## [[0.1.0](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.1.0)] - 2025-02-28
 
-[diff](https://github.com/joshraphael/vscode-rascript/compare/v0.0.4...v0.0.5)
+[diff](https://github.com/joshraphael/vscode-rascript/compare/v0.0.4...v0.1.0)
 
 ### Added
 
-- Hover box for built-in functions: dictionary_contains_key, any_of, all_of, none_of, sum_of, tally_of, assert, achievement
+- Hover box for built-in functions: dictionary_contains_key, any_of, all_of, none_of, sum_of, tally_of, assert, achievement, rich_presence_display, rich_presence_value, rich_presence_lookup, rich_presence_ascii_string_lookup, rich_presence_macro, rich_presence_conditional_display, leaderboard
 
 ### Changed
 
