@@ -42,12 +42,12 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+    "compile": "tsc -p ./ && webpack --mode production --devtool hidden-source-map",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --max-warnings=0",
     "test": "vscode-test",
-    "browser": "webpack --mode development && vscode-test-web --extensionDevelopmentPath=. ."
+    "browser": "npm run pretest && vscode-test-web --extensionDevelopmentPath=. ."
   },
   "devDependencies": {
     "@types/vscode": "^1.97.0",
