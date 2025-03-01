@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Comment documents list markdown formatting
+
 ### Removed
 
 ## [[0.1.0](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.1.0)] - 2025-02-28
