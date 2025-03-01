@@ -16,8 +16,8 @@
     "Programming Languages"
   ],
   "activationEvents": [],
-  "main": "./out/extension.js",
-  "browser": "./dist/extension.js",
+  "main": "./out/extension/extension.js",
+  "browser": "./out/web/extension.js",
   "contributes": {
     "languages": [
       {
