@@ -35,9 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
     const hover = vscode.languages.registerHoverProvider('rascript', {
         provideHover(document: vscode.TextDocument, position: vscode.Position) {
 
-            let words = [
-                // newHoverText("leaderboard", "// Defines a leaderboard. `title` and `description` must be strings.\n//\n// `start`, `cancel`, and `submit` are trigger expressions similar to the [`achievement`](https://github.com/Jamiras/RATools/wiki/Achievement-Functions)'s `trigger` parameter.\n//\n// `value` is a memory accessor, arithmetic expression, or a function that evaluates to a memory accessor or arithmetic expression.\n// Multiple values may be defined by encasing them in a `max_of(a, b, ...)` function.\n//\n// `format` is one of the following:\n//\n// * `VALUE` - number (default)\n//\n// * `SECS` - the value is a number of seconds that should be formatted as `MM:SS`\n//\n// * `FRAMES` - the value is divided by 60 and displayed as `MM:SS`\n//\n// * `POINTS` - the value should be displayed as a zero-padded six digit number\n//\n// * `MILLISECS` - the value is a number of hundredths of a second and will be displayed as `MM:SS.FF`\n//\n// * `MINUTES` - the value is a number of minutes that should be formatted as `HHhMM`\n//\n// * `SECS_AS_MINS` - the value is a number of seconds that should be formatted as `HHhMM`\n//\n// * `FLOAT1` ... `FLOAT6` - the value is formatted to N digits after the decimal (FLOAT1 = 1 digit after the decimal, FLOAT3 = 3 digits after the decimal, etc).\n//\n// * `FIXED1` ... `FIXED3` - the value is formatted with a decimal point N spaces from the end (FIXED1 = 1 digit after the decimal).\n//\n// * `TENS`, `HUNDREDS`, `THOUSANDS` - the value is padded with additional 0s after the end of the value.\n//\n//\n// if `lower_is_better` is `true`, lower scores will be ranked higher in the leaderboard.\n//\n// if `id` is provided when calling the `leaderboard` function, the script will generate a local leaderboard definition that the toolkit will merge into the existing leaderboard instead of putting as a separate local leaderboard.", "https://github.com/Jamiras/RATools/wiki/Leaderboard-Functions", "title", "description", "start", "cancel", "submit", "value", "format", "lower_is_better", "id"),
-            ];
+            let words = [];
             for( let i = 0; i < builtinFunctionDefinitions.length; i++) {
                 let fn = builtinFunctionDefinitions[i];
                 let comment = fn.commentDoc.join("\n");
@@ -83,70 +81,11 @@ export function activate(context: vscode.ExtensionContext) {
         'rascript',
         {
             provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
-                let completionItems = [
-                    newBuiltInFunction('byte'),
-                    newBuiltInFunction('word'),
-                    newBuiltInFunction('tbyte'),
-                    newBuiltInFunction('dword'),
-                    newBuiltInFunction('bit0'),
-                    newBuiltInFunction('bit1'),
-                    newBuiltInFunction('bit2'),
-                    newBuiltInFunction('bit3'),
-                    newBuiltInFunction('bit4'),
-                    newBuiltInFunction('bit5'),
-                    newBuiltInFunction('bit6'),
-                    newBuiltInFunction('bit7'),
-                    newBuiltInFunction('bit'),
-                    newBuiltInFunction('low4'),
-                    newBuiltInFunction('high4'),
-                    newBuiltInFunction('bitcount'),
-                    newBuiltInFunction('word_be'),
-                    newBuiltInFunction('tbyte_be'),
-                    newBuiltInFunction('dword_be'),
-                    newBuiltInFunction('float'),
-                    newBuiltInFunction('mbf32'),
-                    newBuiltInFunction('mbf32_le'),
-                    newBuiltInFunction('double32'),
-                    newBuiltInFunction('double32_be'),
-                    newBuiltInFunction('prev'),
-                    newBuiltInFunction('prior'),
-                    newBuiltInFunction('bcd'),
-                    newBuiltInFunction("ascii_string_equals"),
-                    newBuiltInFunction("unicode_string_equals"),
-                    newBuiltInFunction('repeated'),
-                    newBuiltInFunction('once'),
-                    newBuiltInFunction('tally'),
-                    newBuiltInFunction('never'),
-                    newBuiltInFunction('unless'),
-                    newBuiltInFunction('measured'),
-                    newBuiltInFunction('trigger_when'),
-                    newBuiltInFunction('disable_when'),
-                    newBuiltInFunction('always_true'),
-                    newBuiltInFunction('always_false'),
-                    newBuiltInFunction('format'),
-                    newBuiltInFunction('substring'),
-                    newBuiltInFunction('length'),
-                    newBuiltInFunction('range'),
-                    newBuiltInFunction('array_map'),
-                    newBuiltInFunction('array_contains'),
-                    newBuiltInFunction('array_push'),
-                    newBuiltInFunction('array_pop'),
-                    newBuiltInFunction('dictionary_contains_key'),
-                    newBuiltInFunction('any_of'),
-                    newBuiltInFunction('all_of'),
-                    newBuiltInFunction('none_of'),
-                    newBuiltInFunction('sum_of'),
-                    newBuiltInFunction('tally_of'),
-                    newBuiltInFunction('assert'),
-                    newBuiltInFunction('achievement'),
-                    newBuiltInFunction('rich_presence_display'),
-                    newBuiltInFunction('rich_presence_value'),
-                    newBuiltInFunction('rich_presence_lookup'),
-                    newBuiltInFunction('rich_presence_ascii_string_lookup'),
-                    newBuiltInFunction('rich_presence_macro'),
-                    newBuiltInFunction('rich_presence_conditional_display'),
-                    newBuiltInFunction('leaderboard')
-                ];
+                let completionItems = [];
+                for( let i = 0; i < builtinFunctionDefinitions.length; i++) {
+                    let fn = builtinFunctionDefinitions[i];
+                    completionItems.push(newBuiltInFunction(fn.key));
+                }
                 let text = document.getText();
                 let m: RegExpExecArray | null;
                 while (m = G_FUNCTION_DEFINITION.exec(text)) {
