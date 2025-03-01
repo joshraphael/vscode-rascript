@@ -824,6 +824,7 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
             "// `expression` is a [memory accessor](https://github.com/Jamiras/RATools/wiki/Accessing-Memory), [arithmetic expression](https://github.com/Jamiras/RATools/wiki/Operators#arithmetic-operations), or a function that evaluates to a memory accessor or arithmetic expression.",
             "// ",
             "// `format` is one of the following:",
+            "// ",
             "// * `VALUE` - number (default)",
             "// * `SECS` - the value is a number of seconds that should be formatted as `MM:SS`",
             "// * `FRAMES` - the value is a number of frames that should be converted to seconds and displayed as `MM:SS`",
@@ -916,6 +917,7 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
         ],
         commentDoc: [
             "// `macro` is the name of the built-in macro to use.",
+            "// ",
             "// * `Number` - number (default)",
             "// * `Score` - number padded with leading 0s to 6 digits",
             "// * `Seconds` - the value is a number of seconds that should be formatted as `MM:SS`",
@@ -958,6 +960,46 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
             "// ```",
             "// ",
             "// **NOTE**: To actually publish the script, you have to copy the script definition to the clipboard (there's a link on the viewer for the rich presence) and paste it into the appropriate field on the website."
+        ]
+    },
+    {
+        key: "leaderboard",
+        url: "https://github.com/Jamiras/RATools/wiki/Leaderboard-Functions",
+        args: [
+            "title",
+            "description",
+            "start",
+            "cancel",
+            "submit",
+            "value",
+            "format",
+            "lower_is_better",
+            "id"
+        ],
+        commentDoc: [
+            "// Defines a leaderboard. `title` and `description` must be strings.",
+            "// ",
+            "// `start`, `cancel`, and `submit` are trigger expressions similar to the [`achievement`](https://github.com/Jamiras/RATools/wiki/Achievement-Functions)'s `trigger` parameter.",
+            "// ",
+            "// `value` is a memory accessor, arithmetic expression, or a function that evaluates to a memory accessor or arithmetic expression.",
+            "// Multiple values may be defined by encasing them in a `max_of(a, b, ...)` function.",
+            "// ",
+            "// `format` is one of the following:",
+            "// ",
+            "// * `VALUE` - number (default)",
+            "// * `SECS` - the value is a number of seconds that should be formatted as `MM:SS`",
+            "// * `FRAMES` - the value is divided by 60 and displayed as `MM:SS`",
+            "// * `POINTS` - the value should be displayed as a zero-padded six digit number",
+            "// * `MILLISECS` - the value is a number of hundredths of a second and will be displayed as `MM:SS.FF`",
+            "// * `MINUTES` - the value is a number of minutes that should be formatted as `HHhMM`",
+            "// * `SECS_AS_MINS` - the value is a number of seconds that should be formatted as `HHhMM`",
+            "// * `FLOAT1` ... `FLOAT6` - the value is formatted to N digits after the decimal (FLOAT1 = 1 digit after the decimal, FLOAT3 = 3 digits after the decimal, etc).",
+            "// * `FIXED1` ... `FIXED3` - the value is formatted with a decimal point N spaces from the end (FIXED1 = 1 digit after the decimal).",
+            "// * `TENS`, `HUNDREDS`, `THOUSANDS` - the value is padded with additional 0s after the end of the value.",
+            "// ",
+            "// if `lower_is_better` is `true`, lower scores will be ranked higher in the leaderboard.",
+            "// ",
+            "// if `id` is provided when calling the `leaderboard` function, the script will generate a local leaderboard definition that the toolkit will merge into the existing leaderboard instead of putting as a separate local leaderboard."
         ]
     },
 ];
