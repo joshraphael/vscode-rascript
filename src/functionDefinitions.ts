@@ -792,5 +792,172 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
             "// trigger = byte(0x0088) == 0x8B && byte(0x008C) == 0 && byte(0x0573) >= 0xF6",
             "// ```"
         ]
-    }
+    },
+    {
+        key: "rich_presence_display",
+        url: "https://github.com/Jamiras/RATools/wiki/Rich-Presence-Functions#rich_presence_displayformat_string-parameters",
+        args: [
+            "format_string",
+            "parameters"
+        ],
+        commentDoc: [
+            "// Defines the rich presence display string. Only one string may be defined per script.",
+            "// If this function is called multiple times, the last one will win.",
+            "// ",
+            "// `format_string` is a string with zero or more placeholders that will be evaluated by the emulator at runtime.",
+            "// It uses the same syntax as the [`format`](https://github.com/Jamiras/RATools/wiki/Built-in-Functions#formatformat_string-parameters) function.",
+            "// ",
+            "// For each placeholder a parameter must be defined using a `rich_presence_value` or `rich_presence_lookup` function."
+        ]
+    },
+    {
+        key: "rich_presence_value",
+        url: "https://github.com/Jamiras/RATools/wiki/Rich-Presence-Functions#rich_presence_valuename-expression-format",
+        args: [
+            "name",
+            "expression",
+            "format"
+        ],
+        commentDoc: [
+            "// `name` is the name to associate to the placeholder.",
+            "// ",
+            "// `expression` is a [memory accessor](https://github.com/Jamiras/RATools/wiki/Accessing-Memory), [arithmetic expression](https://github.com/Jamiras/RATools/wiki/Operators#arithmetic-operations), or a function that evaluates to a memory accessor or arithmetic expression.",
+            "// ",
+            "// `format` is one of the following:",
+            "// * `VALUE` - number (default)",
+            "// * `SECS` - the value is a number of seconds that should be formatted as `MM:SS`",
+            "// * `FRAMES` - the value is a number of frames that should be converted to seconds and displayed as `MM:SS`",
+            "// * `POINTS` - the value should be displayed as a six digit score value followed by the word 'POINTS'",
+            "// * `MILLISECS` - the value is a number of hundredths of a second and will be displayed as `MM:SS.FF`",
+            "// * `MINUTES` - the value is a number of minutes that should be formatted as `HHhMM`",
+            "// * `SECS_AS_MINS` - the value is a number of seconds that should be formatted as `HHhMM`",
+            "// * `FLOAT1` ... `FLOAT6` - the value is formatted to N digits after the decimal (FLOAT1 = 1 digit after the decimal, FLOAT3 = 3 digits after the decimal, etc).",
+            "// * `FIXED1` ... `FIXED3` - the value is formatted with a decimal point N spaces from the end (FIXED1 = 1 digit after the decimal).",
+            "// * `TENS`, `HUNDREDS`, `THOUSANDS` - the value is padded with additional 0s after the end of the value."
+        ]
+    },
+    {
+        key: "rich_presence_lookup",
+        url: "https://github.com/Jamiras/RATools/wiki/Rich-Presence-Functions#rich_presence_lookupname-expression-dictionary-fallback",
+        args: [
+            "name",
+            "expression",
+            "dictionary",
+            "fallback"
+        ],
+        commentDoc: [
+            "// `name` is the name to associate to the placeholder. ",
+            "// ",
+            "// `expression` is a memory accessor, arithmetic expression, or a function that evaluates to a memory accessor or arithmetic expression.",
+            "// ",
+            "// `dictionary` is the [key to value map](https://github.com/Jamiras/RATools/wiki/Variables#dictionaries) used to convert the result of `expression` into a string.",
+            "// ",
+            "// `fallback` is an optional parameter that tells the display string what to display if the value isn't found in the dictionary.",
+            "// If not specified, empty string \"\" will be displayed when a value is not found in the dictionary.",
+            "// ",
+            "// #### Example",
+            "// ",
+            "// ```rascript",
+            "// function lives() => byte(0x05D4) + 1",
+            "// function stage() => byte(0x003A)",
+            "// ",
+            "// stages = { 1: \"Downtown\", 2: \"Sewers\" }",
+            "// ",
+            "// rich_presence_display(\"{0}, {1} lives\",",
+            "//     rich_presence_lookup(\"Stage\", stage(), stages),",
+            "//     rich_presence_value(\"Lives\", lives())",
+            "// )",
+            "// ```"
+        ]
+    },
+    {
+        key: "rich_presence_ascii_string_lookup",
+        url: "https://github.com/Jamiras/RATools/wiki/Rich-Presence-Functions#rich_presence_ascii_string_lookupname-address-dictionary-fallback",
+        args: [
+            "name",
+            "address",
+            "dictionary",
+            "fallback"
+        ],
+        commentDoc: [
+            "// Creates a unique mapping from the keys of `dictionary` to match an ASCII string at `address` and constructs a rich presence lookup.",
+            "// ",
+            "// `name` is the name to associate to the placeholder. ",
+            "// ",
+            "// `address` is the address of the ASCII string.",
+            "// If a memory accessor is passed, it's assumed to be a pointer to the ASCII string.",
+            "// ",
+            "// `dictionary` is the key to value map used to map the ASCII string at `address` to a display string.",
+            "// ",
+            "// `fallback` is an optional parameter that tells the display string what to display if the ASCII string isn't found in the dictionary.",
+            "// If not specified, empty string \"\" will be displayed when a value is not found in the dictionary.",
+            "// ",
+            "// #### Example",
+            "// ",
+            "// ```rascript",
+            "// function lives() => byte(0x05D4) + 1",
+            "// function stage_buffer_address() => 0x003A // 8-byte ASCII string",
+            "// ",
+            "// stages = { \"LVL_DTWN\": \"Downtown\", \"LVL_SWRS\": \"Sewers\" }",
+            "// ",
+            "// rich_presence_display(\"{0}, {1} lives\",",
+            "//     rich_presence_ascii_string_lookup(\"Stage\", stage_buffer_address(), stages),",
+            "//     rich_presence_value(\"Lives\", lives())",
+            "// )",
+            "// ```"
+        ]
+    },
+    {
+        key: "rich_presence_macro",
+        url: "https://github.com/Jamiras/RATools/wiki/Rich-Presence-Functions#rich_presence_macromacro-expression",
+        args: [
+            "macro",
+            "expression"
+        ],
+        commentDoc: [
+            "// `macro` is the name of the built-in macro to use.",
+            "// * `Number` - number (default)",
+            "// * `Score` - number padded with leading 0s to 6 digits",
+            "// * `Seconds` - the value is a number of seconds that should be formatted as `MM:SS`",
+            "// * `Centiseconds` - the value is a number of hundredths of a second and will be displayed as `MM:SS.FF`",
+            "// * `Minutes` - the value is a number of minutes that should be formatted as `HHhMM`",
+            "// * `ASCIIChar` - the value is converted to a character using the ASCII lookup table",
+            "// * `UnicodeChar` - the value is converted to a character using the UCS2 (16-bit unicode) lookup table",
+            "// * `Float1` ... `Float6` - the value is formatted to N digits after the decimal (Float1 = 1 digit after the decimal, Float3 = 3 digits after the decimal, etc).",
+            "// * `Fixed1` ... `Fixed3` - the value is formatted with a decimal point N spaces from the end (Fixed1 = 1 digit after the decimal).",
+            "// ",
+            "// `expression` is a [memory accessor](https://github.com/Jamiras/RATools/wiki/Accessing-Memory), [arithmetic expression](https://github.com/Jamiras/RATools/wiki/Operators#arithmetic-operations), or a function that evaluates to a memory accessor or arithmetic expression."
+        ]
+    },
+    {
+        key: "rich_presence_conditional_display",
+        url: "https://github.com/Jamiras/RATools/wiki/Rich-Presence-Functions#rich_presence_conditional_displaycondition-format_string-parameters",
+        args: [
+            "condition",
+            "format_string",
+            "parameters"
+        ],
+        commentDoc: [
+            "// Defines a conditional rich presence display string.",
+            "// When executing the rich presence script, each `condition` is examined in order.",
+            "// If a condition is matched, that display string will be used.",
+            "// If no conditions are matched, the default display string will be used.",
+            "// You must still provide a default display string by calling `rich_presence_display`.",
+            "// ",
+            "// This function has the same structure as `rich_presence_display` with the additional `condition` parameter.",
+            "// `condition` must evaluate to one or more [comparisons](https://github.com/Jamiras/RATools/wiki/Operators#comparisons).",
+            "// ",
+            "// #### Example",
+            "// ",
+            "// ```rascript",
+            "// rich_presence_conditional_display(is_title_screen(), \"Title Screen\")",
+            "// rich_presence_display(\"Playing Battle {0} in {1}\", ",
+            "//     rich_presence_value(\"Battle\", current_level()),",
+            "//     rich_presence_lookup(\"Landscape\", current_landscape(), landscapes)",
+            "// )",
+            "// ```",
+            "// ",
+            "// **NOTE**: To actually publish the script, you have to copy the script definition to the clipboard (there's a link on the viewer for the rich presence) and paste it into the appropriate field on the website."
+        ]
+    },
 ];
