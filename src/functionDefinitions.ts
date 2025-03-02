@@ -208,6 +208,16 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
         ]
     },
     {
+        key: "float_be",
+        url: "",
+        args: [
+            "address"
+        ],
+        commentDoc: [
+            "// Undocumented"
+        ]
+    },
+    {
         key: "mbf32",
         url: "https://github.com/Jamiras/RATools/wiki/Accessing-Memory",
         args: [
@@ -276,6 +286,16 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
         ],
         commentDoc: [
             "// converts a BCD-encoded value to decimal for leaderboard and rich presence values."
+        ]
+    },
+    {
+        key: "identity_transform",
+        url: "https://github.com/Jamiras/RATools/wiki/Accessing-Memory",
+        args: [
+            "accessor"
+        ],
+        commentDoc: [
+            "// Undocumented"
         ]
     },
     {
@@ -385,6 +405,16 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
             "// ",
             "// If `count` is zero, the overall condition will become true as soon as any individual comparison is true.",
             "// This is mostly used when building leaderboard value clauses using the `measured` function as it provides an unbounded counting of the subclauses."
+        ]
+    },
+    {
+        key: "deduct",
+        url: "",
+        args: [
+            "comparison"
+        ],
+        commentDoc: [
+            "// Undocumented"
         ]
     },
     {
@@ -625,6 +655,29 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
         ]
     },
     {
+        key: "array_reduce",
+        url: "",
+        args: [
+            "inputs",
+            "initial",
+            "reducer"
+        ],
+        commentDoc: [
+            "// Undocumented"
+        ]
+    },
+    {
+        key: "array_filter",
+        url: "",
+        args: [
+            "inputs",
+            "predicate"
+        ],
+        commentDoc: [
+            "// Undocumented"
+        ]
+    },
+    {
         key: "dictionary_contains_key",
         url: "https://github.com/Jamiras/RATools/wiki/Built-in-Functions#dictionary_contains_keydictionary-key",
         args: [
@@ -719,6 +772,16 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
             "// ",
             "// `predicate` is a function that accepts a single input and returns an expression constructed from that input.",
             "// The expressions returned by `predicate` are used in the `tally` expression."
+        ]
+    },
+    {
+        key: "max_of",
+        url: "",
+        args: [
+            "inputs"
+        ],
+        commentDoc: [
+            "// Undocumented"
         ]
     },
     {
@@ -1000,6 +1063,16 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
             "// if `lower_is_better` is `true`, lower scores will be ranked higher in the leaderboard.",
             "// ",
             "// if `id` is provided when calling the `leaderboard` function, the script will generate a local leaderboard definition that the toolkit will merge into the existing leaderboard instead of putting as a separate local leaderboard."
+        ]
+    },
+    {
+        key: "__ornext",
+        url: "",
+        args: [
+            "comparison"
+        ],
+        commentDoc: [
+            "// Undocumented"
         ]
     },
 ];
