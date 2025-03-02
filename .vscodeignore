@@ -10,6 +10,8 @@ vsc-extension-quickstart.md
 **/*.ts
 **/.vscode-test.*
 **/.vscode-test-web.*
+out/test/*.js
+out/test/*.map
 scripts/**
 .github/**
 *.rascript
