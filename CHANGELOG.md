@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Header game id comment syntax tokenization
 - Undocumented function definitions for: float_be, identity_transform, deduct, array_reduce, array_filter, max_of, __ornext
+- Minimum version header
 
 ### Changed
 

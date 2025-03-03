@@ -28,7 +28,7 @@
                     "include": "#function-names"
                 },
                 {
-                    "include": "#id"
+                    "include": "#header"
                 },
                 {
                     "include": "#comments"
@@ -65,11 +65,15 @@
                 }
             ]
         },
-        "id": {
+        "header": {
             "patterns": [
                 {
-                    "name": "header.rascript",
-                    "match": "^//\\s*#ID\\s*=\\s*(\\d+)$"
+                    "name": "header.id.rascript",
+                    "match": "^//\\s*#ID\\s*=\\s*\\d+$"
+                },
+                {
+                    "name": "header.version.rascript",
+                    "match": "^//\\s*#MinimumVersion\\s*=\\s*\\d+(.[\\d])?$"
                 }
             ]
         },
