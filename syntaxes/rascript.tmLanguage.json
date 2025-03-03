@@ -68,12 +68,28 @@
         "header": {
             "patterns": [
                 {
-                    "name": "header.id.rascript",
-                    "match": "^//\\s*#ID\\s*=\\s*\\d+$"
+                    "name": "comment.line.double-slash.rascript",
+                    "match": "^//\\s*(#ID)\\s*=\\s*(\\d+)$",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.id.rascript"
+                        },
+                        "2": {
+                            "name": "constant.numeric.id.rascript"
+                        }
+                    }
                 },
                 {
-                    "name": "header.version.rascript",
-                    "match": "^//\\s*#MinimumVersion\\s*=\\s*\\d+(.[\\d])?$"
+                    "name": "comment.line.double-slash.rascript",
+                    "match": "^//\\s*(#MinimumVersion)\\s*=\\s*(\\d+(\\.\\d)?)$",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.version.rascript"
+                        },
+                        "2": {
+                            "name": "constant.numeric.version.rascript"
+                        }
+                    }
                 }
             ]
         },
