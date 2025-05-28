@@ -5,7 +5,7 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [[0.1.2](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.1.2)] - yyyy-mm-dd
+## [[0.1.2](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.1.2)] - 2025-05-27
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.1.1...v0.1.2)
 
@@ -14,8 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Header game id comment syntax tokenization
 - Undocumented function definitions for: float_be, identity_transform, deduct, array_reduce, array_filter, max_of, __ornext
 - Minimum version header
+- Block comment hover box support
 
 ### Changed
+- KoaJS version ([security vulnerability](https://github.com/joshraphael/vscode-rascript/security/dependabot/1))
 
 ### Removed
 
