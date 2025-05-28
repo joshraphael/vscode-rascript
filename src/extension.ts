@@ -3,6 +3,9 @@ import { builtinFunctionDefinitions } from './functionDefinitions';
 
 const G_FUNCTION_DEFINITION = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
 const G_COMMENTS = new RegExp('^\/\/.*$', 'g');
+
+const G_BLOCK_COMMENTS_START = /^.*\/\*.*$/g;
+const G_BLOCK_COMMENTS_END = /^.*\*\/$/g;
 const G_VARIABLES = /(\w+)\s*=/g;
 
 export function activate(context: vscode.ExtensionContext) {
@@ -50,17 +53,71 @@ export function activate(context: vscode.ExtensionContext) {
                 let comment = '';
                 if( pos.line > 0 ) { // dont look for comments if were at the top of the file
                     let offset = 1;
+                    let inBlock = false
                     // while not at the top of the file and the next line up is a comment
                     while(pos.line - offset >= 0) {
-                        let line = document.lineAt(new vscode.Position(pos.line - offset, 0)).text;
-                        let isComment = G_COMMENTS.test(line);
-                        G_COMMENTS.lastIndex = 0; // POS js
-                        if(isComment) {
-                            comment = line + "\n" + comment;
-                            offset = offset + 1;
-                        } else {
-                            break;
+                        let lineNum = pos.line - offset
+                        let line = document.lineAt(new vscode.Position(lineNum, 0)).text;
+                        line = line.trimStart()
+                        if(offset == 1) { // if were right above the function declaration, look for a block comment
+                            let isBlock = G_BLOCK_COMMENTS_END.test(line);
+                            G_BLOCK_COMMENTS_END.lastIndex = 0;
+                            if(isBlock) {
+                                inBlock = true;
+                            }
                         }
+                        if(inBlock) { // handle block comments
+                            let endBlock = G_BLOCK_COMMENTS_START.test(line);
+                            G_BLOCK_COMMENTS_START.lastIndex = 0;
+                            if(endBlock) { // at the beginning of comment block
+
+                                // TRIM START TOKEN
+                                let trimmedLine = line.split(/\/\*(.*)/s); // use whats after the start token
+                                let firstEl = trimmedLine.shift(); // remove text before commend block start
+                                let newLine = trimmedLine.join("").trimStart();
+
+                                // TRIM END TOKEN
+                                trimmedLine = newLine.split("*/"); // use whats after the star token
+                                if( trimmedLine.length > 2 ) {
+                                    let firstEl = trimmedLine.pop()
+                                }
+                                newLine = trimmedLine.join("").trimStart();
+
+                                // TRIM FIRST '*' TOKEN (in case they comment that way)
+                                trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the end token
+                                if(trimmedLine.length > 2){
+                                    let firstEl = trimmedLine.shift(); // remove leading '*'
+                                }
+                                newLine = trimmedLine.join("").trimStart();
+                                comment = "//" + newLine + "\n" + comment;
+                                break;
+                            } else { // at end of comment block
+
+                                // TRIM END TOKEN (guaranteed to not have text after end token if tthe user wants comments to appear in hover box)
+                                let trimmedLine = line.split("*/"); // use whats after the end token
+                                if( trimmedLine.length > 2 ) {
+                                    let firstEl = trimmedLine.pop()
+                                }
+                                let newLine = trimmedLine.join("").trimStart();
+
+                                // TRIM FIRST '*' TOKEN (in case they comment that way)
+                                trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the first star token
+                                if(trimmedLine.length > 2) {
+                                    let firstEl = trimmedLine.shift(); // remove leading '*'
+                                }
+                                newLine = trimmedLine.join("").trimStart();
+                                comment = "//" + trimmedLine[0] + "\n" + comment;
+                            }
+                        } else { // else handle single line block comments
+                            let isComment = G_COMMENTS.test(line);
+                            G_COMMENTS.lastIndex = 0;
+                            if(isComment) {
+                                comment = line + "\n" + comment;
+                            } else {
+                                break;
+                            }
+                        }
+                        offset = offset + 1;
                     }
                 }
                 let args = m[3].split(",").map(s => s.trim());
@@ -139,9 +196,7 @@ function newHoverText(key: string, text: string, docUrl: string, ...args: string
         let codeBlock = false;
         for (let i = 0; i < commentLines.length; i++) {
             let line = commentLines[i].replace(/^\/\//g, "");
-            if (line.startsWith(' ')) {
-                line = line.substring(1);
-            }
+            line = line.trimStart()
             if (line.startsWith('```')) {
                 codeBlock = !codeBlock;
                 if(codeBlock) {
