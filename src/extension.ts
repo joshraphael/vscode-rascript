@@ -13,7 +13,7 @@ const G_COMMENTS = new RegExp('^\/\/.*$', 'g');
 const G_BLOCK_COMMENTS_START = /^.*\/\*.*$/g;
 const G_BLOCK_COMMENTS_END = /^.*\*\/$/g;
 const G_VARIABLES = /(\w+)\s*=/g;
-const G_STAR_BLOCK_COMMENT = /^\*.*/g // starts with a star
+const G_STAR_BLOCK_COMMENT = /^\*.*/g; // starts with a star
 
 let client: LanguageClient;
 
@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const rascriptLanguageServerDll = undefined; //process.env.RASCRIPT_LANGUAGE_SERVER_DLL;
 
-  if (rascriptLanguageServerDll != undefined ) {
+  if (rascriptLanguageServerDll !== undefined ) {
     let serverExe = 'dotnet';
     let serverOptions: ServerOptions = {
       run: { command: serverExe, args: [rascriptLanguageServerDll] },
@@ -41,7 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
             configurationSection: 'languageServerExample',
             fileEvents: vscode.workspace.createFileSystemWatcher('**/*.rascript')
         },
-    }
+    };
 
     // Create the language client and start the client.
     client = new LanguageClient(
