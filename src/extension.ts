@@ -1,4 +1,10 @@
 import * as vscode from 'vscode';
+
+import {
+  LanguageClient,
+  LanguageClientOptions,
+  ServerOptions
+} from 'vscode-languageclient/node';
 import { builtinFunctionDefinitions } from './functionDefinitions';
 
 const G_FUNCTION_DEFINITION = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
@@ -8,7 +14,45 @@ const G_BLOCK_COMMENTS_START = /^.*\/\*.*$/g;
 const G_BLOCK_COMMENTS_END = /^.*\*\/$/g;
 const G_VARIABLES = /(\w+)\s*=/g;
 
+let client: LanguageClient;
+
 export function activate(context: vscode.ExtensionContext) {
+
+  const rascriptLanguageServerDll = process.env.RASCRIPT_LANGUAGE_SERVER_DLL;
+
+  if (rascriptLanguageServerDll != undefined ) {
+    let serverExe = 'dotnet';
+    let serverOptions: ServerOptions = {
+      run: { command: serverExe, args: [rascriptLanguageServerDll] },
+      debug: { command: serverExe, args: [rascriptLanguageServerDll] }
+    };
+
+    // Options to control the language client
+    let clientOptions: LanguageClientOptions = {
+        // Register the server for plain text documents
+        documentSelector: [
+            {
+                pattern: '**/*.rascript',
+            }
+        ],
+        synchronize: {
+            // Synchronize the setting section 'languageServerExample' to the server
+            configurationSection: 'languageServerExample',
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/*.rascript')
+        },
+    }
+
+    // Create the language client and start the client.
+    client = new LanguageClient(
+      'rascript-language-server',
+      'RAScript Language Server',
+      serverOptions,
+      clientOptions
+    );
+
+    // Start the client. This will also launch the server
+    client.start();
+  } else {
     const definitions = vscode.languages.registerDefinitionProvider('rascript', {
         provideDefinition(document, position, token) {
             let text = document.getText();
@@ -158,6 +202,14 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(autocomplete, hover, definitions);
+  }
+}
+
+export function deactivate(): Thenable<void> | undefined {
+  if (!client) {
+    return undefined;
+  }
+  return client.stop();
 }
 
 function newBuiltInFunction(name: string) {
