@@ -13,6 +13,7 @@ const G_COMMENTS = new RegExp('^\/\/.*$', 'g');
 const G_BLOCK_COMMENTS_START = /^.*\/\*.*$/g;
 const G_BLOCK_COMMENTS_END = /^.*\*\/$/g;
 const G_VARIABLES = /(\w+)\s*=/g;
+const G_STAR_BLOCK_COMMENT = /^\*.*/g // starts with a star
 
 let client: LanguageClient;
 
@@ -95,6 +96,8 @@ export function activate(context: vscode.ExtensionContext) {
                 let pos = document.positionAt(m.index);
                 functionDefinitions.set(m[2], pos);
                 let comment = '';
+                let untrimmedComment = ''; // This holds a second copy of the comments with leading stars
+                let blockCommentStarStyle = true;
                 if( pos.line > 0 ) { // dont look for comments if were at the top of the file
                     let offset = 1;
                     let inBlock = false;
@@ -126,6 +129,15 @@ export function activate(context: vscode.ExtensionContext) {
                                     let firstEl = trimmedLine.pop();
                                 }
                                 newLine = trimmedLine.join("").trimStart();
+                                if ( blockCommentStarStyle ) {
+                                    let starComment = G_STAR_BLOCK_COMMENT.test(newLine);
+                                    G_STAR_BLOCK_COMMENT.lastIndex = 0;
+                                    if(!starComment) {
+                                        blockCommentStarStyle = false;
+                                    }
+                                }
+                                untrimmedComment = "//" + newLine + "\n" + untrimmedComment; // keep an untrimmed version of the comment in case the entire block is prefixed with stars
+
 
                                 // TRIM FIRST '*' TOKEN (in case they comment that way)
                                 trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the end token
@@ -143,6 +155,15 @@ export function activate(context: vscode.ExtensionContext) {
                                     let firstEl = trimmedLine.pop();
                                 }
                                 let newLine = trimmedLine.join("").trimStart();
+
+                                if ( blockCommentStarStyle ) {
+                                    let starComment = G_STAR_BLOCK_COMMENT.test(newLine);
+                                    G_STAR_BLOCK_COMMENT.lastIndex = 0;
+                                    if(!starComment) {
+                                        blockCommentStarStyle = false;
+                                    }
+                                }
+                                untrimmedComment = "//" + newLine + "\n" + untrimmedComment; // keep an untrimmed version of the comment in case the entire block is prefixed with stars
 
                                 // TRIM FIRST '*' TOKEN (in case they comment that way)
                                 trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the first star token
@@ -165,7 +186,11 @@ export function activate(context: vscode.ExtensionContext) {
                     }
                 }
                 let args = m[3].split(",").map(s => s.trim());
-                words.push(newHoverText(m[2], comment, "", ...args));
+                if(blockCommentStarStyle) {
+                    words.push(newHoverText(m[2], comment, "", ...args));
+                } else {
+                    words.push(newHoverText(m[2], untrimmedComment, "", ...args));
+                }
             }
             const range = document.getWordRangeAtPosition(position);
             const word = document.getText(range);
