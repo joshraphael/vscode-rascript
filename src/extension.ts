@@ -19,13 +19,12 @@ let client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
 
-  const rascriptLanguageServerDll = undefined; //process.env.RASCRIPT_LANGUAGE_SERVER_DLL;
+  const rascriptLanguageServer = undefined; //process.env.RASCRIPT_LANGUAGE_SERVER;
 
-  if (rascriptLanguageServerDll !== undefined ) {
-    let serverExe = 'dotnet';
+  if (rascriptLanguageServer !== undefined ) {
     let serverOptions: ServerOptions = {
-      run: { command: serverExe, args: [rascriptLanguageServerDll] },
-      debug: { command: serverExe, args: [rascriptLanguageServerDll] }
+      run: { command: rascriptLanguageServer },
+      debug: { command: rascriptLanguageServer }
     };
 
     // Options to control the language client

@@ -15,7 +15,6 @@ Available on the [Visual Studio Marketplace](https://marketplace.visualstudio.co
 - VSCode
 - NPM
 - Make
-- dotnet (Optional -- used for language server)
 
 ## Quickstart
 to start install all dependencies using `npm install`. Once installed the extension should be available to run in VSCode by pressing F5 to launch a new window running the code.
@@ -27,14 +26,14 @@ to start install all dependencies using `npm install`. Once installed the extens
 - Hover Info - Documentation appears when you hover over a function.
 
 ## Language Server (CURRENTLY DISABLED)
-This extension has a [language server](https://github.com/joshraphael/rascript-language-server) available. To use it you will need [dotnet](https://learn.microsoft.com/en-us/dotnet/core/install/) installed. Once dotnet is installed you can begin downloading the latest release of the language server DLL file and place it in a location you remember on your computer. The VSCode extension will look for an environment variable called `RASCRIPT_LANGUAGE_SERVER_DLL` to call from the extension, if it is not set the extension will default to some basic functionality (code jump, function hover text, code completion) without any compile errors. Make sure the file path is correct otherwise the extension will show errors. ex:
+This extension has a [language server](https://github.com/joshraphael/rascript-language-server) available. You can begin by downloading the latest release of the language server file and place it in a location you remember on your computer. The VSCode extension will look for an environment variable called `RASCRIPT_LANGUAGE_SERVER` to call from the extension, if it is not set the extension will default to some basic functionality (code jump, function hover text, code completion) without any compile errors. Make sure the file path is correct otherwise the extension will show errors. ex:
 
 Linux/MacOS:
 ```sh
-export RASCRIPT_LANGUAGE_SERVER_DLL="/home/joshraphael/rascript-language-server.dll"
+export RASCRIPT_LANGUAGE_SERVER="/home/joshraphael/rascript-language-server"
 ```
 
 Windows:
 ```powershell
-setx RASCRIPT_LANGUAGE_SERVER_DLL "C:\Users\joshraphael\rascript-language-server.dll"
+setx RASCRIPT_LANGUAGE_SERVER "C:\Users\joshraphael\rascript-language-server.exe"
 ```
