@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Bump `@vscode/test-web` to version 0.0.70 ([security vulnerability](https://github.com/joshraphael/vscode-rascript/security/dependabot/2))
+
 ### Removed
 
 ## [[0.1.3](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.1.3)] - 2025-06-05
@@ -42,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- KoaJS version ([security vulnerability](https://github.com/joshraphael/vscode-rascript/security/dependabot/1))
+- Bump `@vscode/test-web` to version 0.0.69 ([security vulnerability](https://github.com/joshraphael/vscode-rascript/security/dependabot/1))
 
 ### Removed
 
