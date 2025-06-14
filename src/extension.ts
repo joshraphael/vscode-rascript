@@ -24,13 +24,17 @@ export function activate(context: vscode.ExtensionContext) {
 
 async function setup(context: vscode.ExtensionContext, rascriptLanguageServer: string) {
     const fileUri = vscode.Uri.file(rascriptLanguageServer);
+    if( rascriptLanguageServer === undefined || rascriptLanguageServer === "" ) {
+        localExtension(context);
+        return;
+    }
     try {
-      await vscode.workspace.fs.stat(fileUri);
-    //   vscode.window.showInformationMessage('Language Server Started');
-      languageServer(context, rascriptLanguageServer);
+        await vscode.workspace.fs.stat(fileUri);
+        //   vscode.window.showInformationMessage('Language Server Started');
+        languageServer(context, rascriptLanguageServer);
     } catch (error) {
-    //   vscode.window.showInformationMessage('No Language Server Found');
-      localExtension(context);
+        //   vscode.window.showInformationMessage('No Language Server Found');
+        localExtension(context);
     }
 }
 
