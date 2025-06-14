@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 async function setup(context: vscode.ExtensionContext, rascriptLanguageServer: string) {
-    const fileUri = vscode.Uri.file(rascriptLanguageServer)
+    const fileUri = vscode.Uri.file(rascriptLanguageServer);
     try {
       await vscode.workspace.fs.stat(fileUri);
     //   vscode.window.showInformationMessage('Language Server Started');
