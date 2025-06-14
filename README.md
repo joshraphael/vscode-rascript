@@ -25,15 +25,15 @@ to start install all dependencies using `npm install`. Once installed the extens
 - Code Completion - Completion results appear for symbols as you type.
 - Hover Info - Documentation appears when you hover over a function.
 
-## Language Server (CURRENTLY DISABLED)
-This extension has a [language server](https://github.com/joshraphael/rascript-language-server) available. You can begin by downloading the latest release of the language server file and place it in a location you remember on your computer. The VSCode extension will look for an environment variable called `RASCRIPT_LANGUAGE_SERVER` to call from the extension, if it is not set the extension will default to some basic functionality (code jump, function hover text, code completion) without any compile errors. Make sure the file path is correct otherwise the extension will show errors. ex:
+## Language Server
+This extension has a [language server](https://github.com/joshraphael/rascript-language-server) available. You can begin by downloading the latest release of the language server file for your operating system and place it in a location you remember on your computer. The VSCode extension has an extension setting to specify the location of the langauge server binary. Open the settings menu using `Ctrl+,` then go to `User > Commonly Used > Extensions` and find the `RAScript Language Server` section. Underneath this youll find a string field called `Language Server` that you need to specify the full path to the binary, if it is not set or the file is not found the extension will default to some basic functionality (code jump, function hover text, code completion) without any RATools errors/Code Note hover text. You may need to restart VSCode after setting this value. Make sure the file path is correct otherwise the extension will show errors. Below are some examples of what the filepath could look like on different operating systems:
 
 Linux/MacOS:
-```sh
-export RASCRIPT_LANGUAGE_SERVER="/home/joshraphael/rascript-language-server"
+```text
+/home/joshraphael/rascript-language-server_v0.0.1_linux-x64
 ```
 
 Windows:
-```powershell
-setx RASCRIPT_LANGUAGE_SERVER "C:\Users\joshraphael\rascript-language-server.exe"
+```text
+C:\Users\joshraphael\rascript-language-server_v0.0.1_win-x64.exe
 ```
