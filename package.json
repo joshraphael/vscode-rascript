@@ -19,6 +19,16 @@
   "main": "./out/extension/extension.js",
   "browser": "./out/web/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "RAScript Language Server",
+      "properties": {
+        "rascript.languageServer": {
+          "type": "string",
+          "default": "",
+          "description": "File path to the RAScript Language Server binary"
+        }
+      }
+    },
     "languages": [
       {
         "id": "rascript",

@@ -18,10 +18,23 @@ const G_STAR_BLOCK_COMMENT = /^\*.*/g; // starts with a star
 let client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
+    const rascriptLanguageServer = vscode.workspace.getConfiguration('rascript').languageServer;
+    setup(context, rascriptLanguageServer);
+}
 
-  const rascriptLanguageServer = undefined; //process.env.RASCRIPT_LANGUAGE_SERVER;
+async function setup(context: vscode.ExtensionContext, rascriptLanguageServer: string) {
+    const fileUri = vscode.Uri.file(rascriptLanguageServer)
+    try {
+      await vscode.workspace.fs.stat(fileUri);
+    //   vscode.window.showInformationMessage('Language Server Started');
+      languageServer(context, rascriptLanguageServer);
+    } catch (error) {
+    //   vscode.window.showInformationMessage('No Language Server Found');
+      localExtension(context);
+    }
+}
 
-  if (rascriptLanguageServer !== undefined ) {
+function languageServer(context: vscode.ExtensionContext, rascriptLanguageServer: string) {
     let serverOptions: ServerOptions = {
       run: { command: rascriptLanguageServer },
       debug: { command: rascriptLanguageServer }
@@ -36,8 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         ],
         synchronize: {
-            // Synchronize the setting section 'languageServerExample' to the server
-            configurationSection: 'languageServerExample',
+            configurationSection: 'rascriptLanguageServer',
             fileEvents: vscode.workspace.createFileSystemWatcher('**/*.rascript')
         },
     };
@@ -52,7 +64,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Start the client. This will also launch the server
     client.start();
-  } else {
+}
+
+function localExtension(context: vscode.ExtensionContext) {
     const definitions = vscode.languages.registerDefinitionProvider('rascript', {
         provideDefinition(document, position, token) {
             let text = document.getText();
@@ -226,7 +240,6 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(autocomplete, hover, definitions);
-  }
 }
 
 export function deactivate(): Thenable<void> | undefined {
