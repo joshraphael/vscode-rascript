@@ -55,7 +55,11 @@
     "compile": "tsc -p ./ && webpack --mode production --devtool hidden-source-map",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --max-warnings=0",
+    "lint": "eslint --ext .js,.ts,.tsx src --max-warnings=0",
+    "format": "prettier --write 'src/**/*.{json,md,js,ts,tsx}'",
+    "format:write": "prettier --write 'src/**/*.{json,md,js,ts,tsx}'",
+    "format:check": "prettier --check 'src/**/*.{json,md,js,ts,tsx}'",
+    "lint:fix": "eslint --ext .js,.ts,.tsx src --max-warnings=0 --fix",
     "test": "vscode-test",
     "browser": "npm run pretest && vscode-test-web --extensionDevelopmentPath=. ."
   },
@@ -66,6 +70,7 @@
     "@typescript-eslint/eslint-plugin": "^8.22.0",
     "@typescript-eslint/parser": "^8.22.0",
     "eslint": "^9.19.0",
+    "eslint-config-prettier": "^8.6.0",
     "typescript": "^5.7.3",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
@@ -73,6 +78,7 @@
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
     "ts-loader": "^7.0.5",
-    "vscode-languageclient": "^9.0.1"
+    "vscode-languageclient": "^9.0.1",
+    "prettier": "2.8.3"
   }
 }

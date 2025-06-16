@@ -1,14 +1,14 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 import {
   LanguageClient,
   LanguageClientOptions,
-  ServerOptions
-} from 'vscode-languageclient/node';
-import { builtinFunctionDefinitions } from './functionDefinitions';
+  ServerOptions,
+} from "vscode-languageclient/node";
+import { builtinFunctionDefinitions } from "./functionDefinitions";
 
 const G_FUNCTION_DEFINITION = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
-const G_COMMENTS = new RegExp('^\/\/.*$', 'g');
+const G_COMMENTS = new RegExp("^//.*$", "g");
 
 const G_BLOCK_COMMENTS_START = /^.*\/\*.*$/g;
 const G_BLOCK_COMMENTS_END = /^.*\*\/$/g;
@@ -18,232 +18,260 @@ const G_STAR_BLOCK_COMMENT = /^\*.*/g; // starts with a star
 let client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
-    const rascriptLanguageServer = vscode.workspace.getConfiguration('rascript').languageServer;
-    setup(context, rascriptLanguageServer);
+  const rascriptLanguageServer =
+    vscode.workspace.getConfiguration("rascript").languageServer;
+  setup(context, rascriptLanguageServer);
 }
 
-async function setup(context: vscode.ExtensionContext, rascriptLanguageServer: string) {
-    const fileUri = vscode.Uri.file(rascriptLanguageServer);
-    if( rascriptLanguageServer === undefined || rascriptLanguageServer === "" ) {
-        localExtension(context);
-        return;
-    }
-    try {
-        await vscode.workspace.fs.stat(fileUri);
-        //   vscode.window.showInformationMessage('Language Server Started');
-        languageServer(context, rascriptLanguageServer);
-    } catch (error) {
-        //   vscode.window.showInformationMessage('No Language Server Found');
-        localExtension(context);
-    }
-}
-
-function languageServer(context: vscode.ExtensionContext, rascriptLanguageServer: string) {
-    let serverOptions: ServerOptions = {
-      run: { command: rascriptLanguageServer },
-      debug: { command: rascriptLanguageServer }
-    };
-
-    // Options to control the language client
-    let clientOptions: LanguageClientOptions = {
-        // Register the server for plain text documents
-        documentSelector: [
-            {
-                pattern: '**/*.rascript',
-            }
-        ],
-        synchronize: {
-            configurationSection: 'rascriptLanguageServer',
-            fileEvents: vscode.workspace.createFileSystemWatcher('**/*.rascript')
-        },
-    };
-
-    // Create the language client and start the client.
-    client = new LanguageClient(
-      'rascript-language-server',
-      'RAScript Language Server',
-      serverOptions,
-      clientOptions
+async function setup(
+  context: vscode.ExtensionContext,
+  rascriptLanguageServer: string
+) {
+  const fileUri = vscode.Uri.file(rascriptLanguageServer);
+  if (rascriptLanguageServer === undefined || rascriptLanguageServer === "") {
+    vscode.window.showInformationMessage("No Language Server specified");
+    localExtension(context);
+    return;
+  }
+  try {
+    await vscode.workspace.fs.stat(fileUri);
+    languageServer(context, rascriptLanguageServer);
+  } catch (error) {
+    vscode.window.showInformationMessage(
+      "No Language Server found at: " + rascriptLanguageServer
     );
+    localExtension(context);
+  }
+}
 
-    // Start the client. This will also launch the server
-    client.start();
+function languageServer(
+  context: vscode.ExtensionContext,
+  rascriptLanguageServer: string
+) {
+  let serverOptions: ServerOptions = {
+    run: { command: rascriptLanguageServer },
+    debug: { command: rascriptLanguageServer },
+  };
+
+  // Options to control the language client
+  let clientOptions: LanguageClientOptions = {
+    // Register the server for plain text documents
+    documentSelector: [
+      {
+        pattern: "**/*.rascript",
+      },
+    ],
+    synchronize: {
+      configurationSection: "rascriptLanguageServer",
+      fileEvents: vscode.workspace.createFileSystemWatcher("**/*.rascript"),
+    },
+  };
+
+  // Create the language client and start the client.
+  client = new LanguageClient(
+    "rascript-language-server",
+    "RAScript Language Server",
+    serverOptions,
+    clientOptions
+  );
+
+  // Start the client. This will also launch the server
+  client
+    .start()
+    .then(() => {
+      vscode.window.showInformationMessage(
+        "Language Server started from: " + rascriptLanguageServer
+      );
+    })
+    .catch((error) => {
+      vscode.window.showInformationMessage(
+        "Failed to start language server: " + error
+      );
+      localExtension(context);
+    });
 }
 
 function localExtension(context: vscode.ExtensionContext) {
-    const definitions = vscode.languages.registerDefinitionProvider('rascript', {
-        provideDefinition(document, position, token) {
-            let text = document.getText();
-            const range = document.getWordRangeAtPosition(position);
-            const word = document.getText(range);
-            let m: RegExpExecArray | null;
-            let functionDefinitions = new Map<string, vscode.Position>();
-            while (m = G_FUNCTION_DEFINITION.exec(text)) {
-                let pos = document.positionAt(m.index);
-                functionDefinitions.set(m[2], pos);
-            }
-            if (functionDefinitions.has(word)) {
-                let pos = functionDefinitions.get(word);
-                if(pos !== undefined) {
-                    let r = new vscode.Range(pos, pos);
-                    const locLink: vscode.LocationLink = {
-                        targetRange: r,
-                        targetUri: document.uri,
-                    };
-                    return [locLink];
-                }
-            }
-            return null;
+  const definitions = vscode.languages.registerDefinitionProvider("rascript", {
+    provideDefinition(document, position, token) {
+      let text = document.getText();
+      const range = document.getWordRangeAtPosition(position);
+      const word = document.getText(range);
+      let m: RegExpExecArray | null;
+      let functionDefinitions = new Map<string, vscode.Position>();
+      while ((m = G_FUNCTION_DEFINITION.exec(text))) {
+        let pos = document.positionAt(m.index);
+        functionDefinitions.set(m[2], pos);
+      }
+      if (functionDefinitions.has(word)) {
+        let pos = functionDefinitions.get(word);
+        if (pos !== undefined) {
+          let r = new vscode.Range(pos, pos);
+          const locLink: vscode.LocationLink = {
+            targetRange: r,
+            targetUri: document.uri,
+          };
+          return [locLink];
         }
-    });
+      }
+      return null;
+    },
+  });
 
-    const hover = vscode.languages.registerHoverProvider('rascript', {
-        provideHover(document: vscode.TextDocument, position: vscode.Position) {
-
-            let words = [];
-            for( let i = 0; i < builtinFunctionDefinitions.length; i++) {
-                let fn = builtinFunctionDefinitions[i];
-                let comment = fn.commentDoc.join("\n");
-                words.push(newHoverText(fn.key, comment, fn.url, ...fn.args));
+  const hover = vscode.languages.registerHoverProvider("rascript", {
+    provideHover(document: vscode.TextDocument, position: vscode.Position) {
+      let words = [];
+      for (let i = 0; i < builtinFunctionDefinitions.length; i++) {
+        let fn = builtinFunctionDefinitions[i];
+        let comment = fn.commentDoc.join("\n");
+        words.push(newHoverText(fn.key, comment, fn.url, ...fn.args));
+      }
+      let text = document.getText();
+      let m: RegExpExecArray | null;
+      let functionDefinitions = new Map<string, vscode.Position>();
+      while ((m = G_FUNCTION_DEFINITION.exec(text))) {
+        let pos = document.positionAt(m.index);
+        functionDefinitions.set(m[2], pos);
+        let comment = "";
+        let untrimmedComment = ""; // This holds a second copy of the comments with leading stars
+        let blockCommentStarStyle = true;
+        if (pos.line > 0) {
+          // dont look for comments if were at the top of the file
+          let offset = 1;
+          let inBlock = false;
+          // while not at the top of the file and the next line up is a comment
+          while (pos.line - offset >= 0) {
+            let lineNum = pos.line - offset;
+            let line = document.lineAt(new vscode.Position(lineNum, 0)).text;
+            line = line.trimStart();
+            if (offset === 1) {
+              // if were right above the function declaration, look for a block comment
+              let isBlock = G_BLOCK_COMMENTS_END.test(line);
+              G_BLOCK_COMMENTS_END.lastIndex = 0;
+              if (isBlock) {
+                inBlock = true;
+              }
             }
-            let text = document.getText();
-            let m: RegExpExecArray | null;
-            let functionDefinitions = new Map<string, vscode.Position>();
-            while (m = G_FUNCTION_DEFINITION.exec(text)) {
-                let pos = document.positionAt(m.index);
-                functionDefinitions.set(m[2], pos);
-                let comment = '';
-                let untrimmedComment = ''; // This holds a second copy of the comments with leading stars
-                let blockCommentStarStyle = true;
-                if( pos.line > 0 ) { // dont look for comments if were at the top of the file
-                    let offset = 1;
-                    let inBlock = false;
-                    // while not at the top of the file and the next line up is a comment
-                    while(pos.line - offset >= 0) {
-                        let lineNum = pos.line - offset;
-                        let line = document.lineAt(new vscode.Position(lineNum, 0)).text;
-                        line = line.trimStart();
-                        if(offset === 1) { // if were right above the function declaration, look for a block comment
-                            let isBlock = G_BLOCK_COMMENTS_END.test(line);
-                            G_BLOCK_COMMENTS_END.lastIndex = 0;
-                            if(isBlock) {
-                                inBlock = true;
-                            }
-                        }
-                        if(inBlock) { // handle block comments
-                            let endBlock = G_BLOCK_COMMENTS_START.test(line);
-                            G_BLOCK_COMMENTS_START.lastIndex = 0;
-                            if(endBlock) { // at the beginning of comment block
+            if (inBlock) {
+              // handle block comments
+              let endBlock = G_BLOCK_COMMENTS_START.test(line);
+              G_BLOCK_COMMENTS_START.lastIndex = 0;
+              if (endBlock) {
+                // at the beginning of comment block
 
-                                // TRIM START TOKEN
-                                let trimmedLine = line.split(/\/\*(.*)/s); // use whats after the start token
-                                let firstEl = trimmedLine.shift(); // remove text before commend block start
-                                let newLine = trimmedLine.join("").trimStart();
+                // TRIM START TOKEN
+                let trimmedLine = line.split(/\/\*(.*)/s); // use whats after the start token
+                let firstEl = trimmedLine.shift(); // remove text before commend block start
+                let newLine = trimmedLine.join("").trimStart();
 
-                                // TRIM END TOKEN
-                                trimmedLine = newLine.split("*/"); // use whats after the star token
-                                if( trimmedLine.length > 2 ) {
-                                    let firstEl = trimmedLine.pop();
-                                }
-                                newLine = trimmedLine.join("").trimStart();
-                                if ( blockCommentStarStyle ) {
-                                    let starComment = G_STAR_BLOCK_COMMENT.test(newLine);
-                                    G_STAR_BLOCK_COMMENT.lastIndex = 0;
-                                    if(!starComment) {
-                                        blockCommentStarStyle = false;
-                                    }
-                                }
-                                untrimmedComment = "//" + newLine + "\n" + untrimmedComment; // keep an untrimmed version of the comment in case the entire block is prefixed with stars
-
-
-                                // TRIM FIRST '*' TOKEN (in case they comment that way)
-                                trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the end token
-                                if(trimmedLine.length > 2){
-                                    let firstEl = trimmedLine.shift(); // remove leading '*'
-                                }
-                                newLine = trimmedLine.join("").trimStart();
-                                comment = "//" + newLine + "\n" + comment;
-                                break;
-                            } else { // at end of comment block
-
-                                // TRIM END TOKEN (guaranteed to not have text after end token if tthe user wants comments to appear in hover box)
-                                let trimmedLine = line.split("*/"); // use whats after the end token
-                                if( trimmedLine.length > 2 ) {
-                                    let firstEl = trimmedLine.pop();
-                                }
-                                let newLine = trimmedLine.join("").trimStart();
-
-                                if ( blockCommentStarStyle ) {
-                                    let starComment = G_STAR_BLOCK_COMMENT.test(newLine);
-                                    G_STAR_BLOCK_COMMENT.lastIndex = 0;
-                                    if(!starComment) {
-                                        blockCommentStarStyle = false;
-                                    }
-                                }
-                                untrimmedComment = "//" + newLine + "\n" + untrimmedComment; // keep an untrimmed version of the comment in case the entire block is prefixed with stars
-
-                                // TRIM FIRST '*' TOKEN (in case they comment that way)
-                                trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the first star token
-                                if(trimmedLine.length > 2) {
-                                    let firstEl = trimmedLine.shift(); // remove leading '*'
-                                }
-                                newLine = trimmedLine.join("").trimStart();
-                                comment = "//" + trimmedLine[0] + "\n" + comment;
-                            }
-                        } else { // else handle single line block comments
-                            let isComment = G_COMMENTS.test(line);
-                            G_COMMENTS.lastIndex = 0;
-                            if(isComment) {
-                                comment = line + "\n" + comment;
-                            } else {
-                                break;
-                            }
-                        }
-                        offset = offset + 1;
-                    }
+                // TRIM END TOKEN
+                trimmedLine = newLine.split("*/"); // use whats after the star token
+                if (trimmedLine.length > 2) {
+                  let firstEl = trimmedLine.pop();
                 }
-                let args = m[3].split(",").map(s => s.trim());
-                if(blockCommentStarStyle) {
-                    words.push(newHoverText(m[2], comment, "", ...args));
-                } else {
-                    words.push(newHoverText(m[2], untrimmedComment, "", ...args));
+                newLine = trimmedLine.join("").trimStart();
+                if (blockCommentStarStyle) {
+                  let starComment = G_STAR_BLOCK_COMMENT.test(newLine);
+                  G_STAR_BLOCK_COMMENT.lastIndex = 0;
+                  if (!starComment) {
+                    blockCommentStarStyle = false;
+                  }
                 }
+                untrimmedComment = "//" + newLine + "\n" + untrimmedComment; // keep an untrimmed version of the comment in case the entire block is prefixed with stars
+
+                // TRIM FIRST '*' TOKEN (in case they comment that way)
+                trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the end token
+                if (trimmedLine.length > 2) {
+                  let firstEl = trimmedLine.shift(); // remove leading '*'
+                }
+                newLine = trimmedLine.join("").trimStart();
+                comment = "//" + newLine + "\n" + comment;
+                break;
+              } else {
+                // at end of comment block
+
+                // TRIM END TOKEN (guaranteed to not have text after end token if tthe user wants comments to appear in hover box)
+                let trimmedLine = line.split("*/"); // use whats after the end token
+                if (trimmedLine.length > 2) {
+                  let firstEl = trimmedLine.pop();
+                }
+                let newLine = trimmedLine.join("").trimStart();
+
+                if (blockCommentStarStyle) {
+                  let starComment = G_STAR_BLOCK_COMMENT.test(newLine);
+                  G_STAR_BLOCK_COMMENT.lastIndex = 0;
+                  if (!starComment) {
+                    blockCommentStarStyle = false;
+                  }
+                }
+                untrimmedComment = "//" + newLine + "\n" + untrimmedComment; // keep an untrimmed version of the comment in case the entire block is prefixed with stars
+
+                // TRIM FIRST '*' TOKEN (in case they comment that way)
+                trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the first star token
+                if (trimmedLine.length > 2) {
+                  let firstEl = trimmedLine.shift(); // remove leading '*'
+                }
+                newLine = trimmedLine.join("").trimStart();
+                comment = "//" + trimmedLine[0] + "\n" + comment;
+              }
+            } else {
+              // else handle single line block comments
+              let isComment = G_COMMENTS.test(line);
+              G_COMMENTS.lastIndex = 0;
+              if (isComment) {
+                comment = line + "\n" + comment;
+              } else {
+                break;
+              }
             }
-            const range = document.getWordRangeAtPosition(position);
-            const word = document.getText(range);
-
-            for (let i = 0; i < words.length; i++) {
-                if (words[i].key === word) {
-                    return words[i].hover;
-                }
-            }
-            return null;
+            offset = offset + 1;
+          }
         }
-    });
-    const autocomplete = vscode.languages.registerCompletionItemProvider(
-        'rascript',
-        {
-            provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
-                let completionItems = [];
-                for( let i = 0; i < builtinFunctionDefinitions.length; i++) {
-                    let fn = builtinFunctionDefinitions[i];
-                    completionItems.push(newBuiltInFunction(fn.key));
-                }
-                let text = document.getText();
-                let m: RegExpExecArray | null;
-                while (m = G_FUNCTION_DEFINITION.exec(text)) {
-                    completionItems.push(newBuiltInFunction(m[2]));
-                }
-                while (m = G_VARIABLES.exec(text)) {
-                    completionItems.push(newVariable(m[1]));
-                }
-
-                return completionItems;
-            }
+        let args = m[3].split(",").map((s) => s.trim());
+        if (blockCommentStarStyle) {
+          words.push(newHoverText(m[2], comment, "", ...args));
+        } else {
+          words.push(newHoverText(m[2], untrimmedComment, "", ...args));
         }
-    );
+      }
+      const range = document.getWordRangeAtPosition(position);
+      const word = document.getText(range);
 
-    context.subscriptions.push(autocomplete, hover, definitions);
+      for (let i = 0; i < words.length; i++) {
+        if (words[i].key === word) {
+          return words[i].hover;
+        }
+      }
+      return null;
+    },
+  });
+  const autocomplete = vscode.languages.registerCompletionItemProvider(
+    "rascript",
+    {
+      provideCompletionItems(
+        document: vscode.TextDocument,
+        position: vscode.Position
+      ) {
+        let completionItems = [];
+        for (let i = 0; i < builtinFunctionDefinitions.length; i++) {
+          let fn = builtinFunctionDefinitions[i];
+          completionItems.push(newBuiltInFunction(fn.key));
+        }
+        let text = document.getText();
+        let m: RegExpExecArray | null;
+        while ((m = G_FUNCTION_DEFINITION.exec(text))) {
+          completionItems.push(newBuiltInFunction(m[2]));
+        }
+        while ((m = G_VARIABLES.exec(text))) {
+          completionItems.push(newVariable(m[1]));
+        }
+
+        return completionItems;
+      },
+    }
+  );
+
+  context.subscriptions.push(autocomplete, hover, definitions);
 }
 
 export function deactivate(): Thenable<void> | undefined {
@@ -254,81 +282,87 @@ export function deactivate(): Thenable<void> | undefined {
 }
 
 function newBuiltInFunction(name: string) {
-    const snippetCompletion = new vscode.CompletionItem(name);
-    snippetCompletion.insertText = new vscode.SnippetString(name + '()');
-    snippetCompletion.kind = vscode.CompletionItemKind.Function;
-    const moveCursorCommand: vscode.Command = {
-        title: "Move cursor left between parentheses",
-        command: "cursorLeft"
-    };
-            
-    snippetCompletion.command = moveCursorCommand;
-    return snippetCompletion;
+  const snippetCompletion = new vscode.CompletionItem(name);
+  snippetCompletion.insertText = new vscode.SnippetString(name + "()");
+  snippetCompletion.kind = vscode.CompletionItemKind.Function;
+  const moveCursorCommand: vscode.Command = {
+    title: "Move cursor left between parentheses",
+    command: "cursorLeft",
+  };
+
+  snippetCompletion.command = moveCursorCommand;
+  return snippetCompletion;
 }
 
 function newVariable(name: string) {
-    const snippetCompletion = new vscode.CompletionItem(name, vscode.CompletionItemKind.Variable);
+  const snippetCompletion = new vscode.CompletionItem(
+    name,
+    vscode.CompletionItemKind.Variable
+  );
 
-    return snippetCompletion;
+  return snippetCompletion;
 }
 
 interface HoverData {
-    key: string;
-    hover: vscode.Hover;
+  key: string;
+  hover: vscode.Hover;
 }
 
-function newHoverText(key: string, text: string, docUrl: string, ...args: string[]): HoverData {
-    let argStr = args.join(", ");
-    let commentLines = text.split(/\r?\n/);
-    let lines = [
-        `\`\`\`rascript\nfunction ${key}(${argStr})\n\`\`\``
-    ];
-    if( text !== '') {
-        lines.push('---');
-        let curr = '';
-        let codeBlock = false;
-        for (let i = 0; i < commentLines.length; i++) {
-            let line = commentLines[i].replace(/^\/\//g, "");
-            line = line.trimStart();
-            if (line.startsWith('```')) {
-                codeBlock = !codeBlock;
-                if(codeBlock) {
-                    curr = line;
-                } else {
-                    curr = curr + "\n" + line;
-                    lines.push(curr);
-                    curr = '';
-                }
-                continue;
-            }
-            if (line.startsWith('|') || line.startsWith('*')) {
-                line = line + "\n";
-            }
-            if(codeBlock) {
-                curr = curr + "\n" + line;
-            } else {
-                if( line === '' ) {
-                    lines.push(curr);
-                    curr = '';
-                } else {
-                    curr = curr + " " + line;
-                }
-            }
+function newHoverText(
+  key: string,
+  text: string,
+  docUrl: string,
+  ...args: string[]
+): HoverData {
+  let argStr = args.join(", ");
+  let commentLines = text.split(/\r?\n/);
+  let lines = [`\`\`\`rascript\nfunction ${key}(${argStr})\n\`\`\``];
+  if (text !== "") {
+    lines.push("---");
+    let curr = "";
+    let codeBlock = false;
+    for (let i = 0; i < commentLines.length; i++) {
+      let line = commentLines[i].replace(/^\/\//g, "");
+      line = line.trimStart();
+      if (line.startsWith("```")) {
+        codeBlock = !codeBlock;
+        if (codeBlock) {
+          curr = line;
+        } else {
+          curr = curr + "\n" + line;
+          lines.push(curr);
+          curr = "";
         }
-        if( curr !== '' ) {
-            lines.push(curr);
+        continue;
+      }
+      if (line.startsWith("|") || line.startsWith("*")) {
+        line = line + "\n";
+      }
+      if (codeBlock) {
+        curr = curr + "\n" + line;
+      } else {
+        if (line === "") {
+          lines.push(curr);
+          curr = "";
+        } else {
+          curr = curr + " " + line;
         }
-        if( codeBlock ) {
-            lines.push('```');
-        }
+      }
     }
-    if( docUrl !== '') {
-        lines.push('---');
-        lines.push(`[Wiki link for \`${key}()\`](${docUrl})`);
+    if (curr !== "") {
+      lines.push(curr);
     }
+    if (codeBlock) {
+      lines.push("```");
+    }
+  }
+  if (docUrl !== "") {
+    lines.push("---");
+    lines.push(`[Wiki link for \`${key}()\`](${docUrl})`);
+  }
 
-    return {
-        key: key,
-        hover: new vscode.Hover(lines)
-    };
+  return {
+    key: key,
+    hover: new vscode.Hover(lines),
+  };
 }
