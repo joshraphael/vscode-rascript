@@ -33,15 +33,7 @@ async function setup(
     localExtension(context);
     return;
   }
-  try {
-    await vscode.workspace.fs.stat(fileUri);
-    languageServer(context, rascriptLanguageServer);
-  } catch (error) {
-    vscode.window.showInformationMessage(
-      "No Language Server found at: " + rascriptLanguageServer
-    );
-    localExtension(context);
-  }
+  languageServer(context, rascriptLanguageServer);
 }
 
 function languageServer(
