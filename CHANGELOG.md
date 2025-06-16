@@ -5,6 +5,18 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [[0.2.2](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.2.2)] - 2025-06-15
+
+[diff](https://github.com/joshraphael/vscode-rascript/compare/v0.2.1...v0.2.2)
+
+### Added
+
+### Changed
+
+- Better fallback code for missing language server
+
+### Removed
+
 ## [[0.2.1](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.2.1)] - 2025-06-14
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.2.0...v0.2.1)
