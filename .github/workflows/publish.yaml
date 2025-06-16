@@ -24,3 +24,9 @@ jobs:
           pat: ${{ secrets.AZURE_PAT }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: Release tag ${{ github.ref_name }}
+          files: |
+            ${{ steps.publishToOpenVSX.outputs.vsixPath }}
