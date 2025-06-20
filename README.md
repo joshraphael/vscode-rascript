@@ -1,4 +1,4 @@
-# <p align="center">![ra](assets/ra_big.png "Retro Achievements VSCode")<br>vscode-rascript</p>
+# <p align="center">![ra](assets/ra_vscode.png "Retro Achievements VSCode")<br>vscode-rascript</p>
 
 # RAScript extension for Visual Studio Code
 

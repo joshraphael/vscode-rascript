@@ -4,7 +4,7 @@
   "description": "The Visual Studio Code RAScript extension provides language support for the RATools scripting language.",
   "version": "0.2.4",
   "publisher": "joshraphael",
-  "icon": "assets/ra_big.png",
+  "icon": "assets/ra_vscode.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/joshraphael/vscode-rascript"
