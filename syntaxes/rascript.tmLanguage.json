@@ -208,7 +208,7 @@
             "patterns": [
                 {
                     "name": "variable.language.this.rascript",
-                    "match": "\\b(this)"
+                    "match": "\\b(this)\\b"
                 }
             ]
         },
