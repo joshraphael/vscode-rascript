@@ -107,6 +107,10 @@
                         "2": {
                             "patterns": [
                                 {
+                                    "match": "[0-9][a-zA-Z0-9]*",
+                                    "name": "invalid.illegal.identifier.rascript"
+                                },
+                                {
                                    "match": "\\w+",
                                    "name": "entity.name.class.rascript"
                                 }
@@ -126,6 +130,10 @@
                         },
                         "2": {
                             "patterns": [
+                                {
+                                    "match": "[0-9][a-zA-Z0-9]*",
+                                    "name": "invalid.illegal.identifier.rascript"
+                                },
                                 {
                                    "match": "\\w+",
                                    "name": "entity.name.function.rascript"
