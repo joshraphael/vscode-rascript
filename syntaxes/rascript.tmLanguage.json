@@ -22,6 +22,9 @@
                     "include": "#numbers"
                 },
                 {
+                    "include": "#class-definitions"
+                },
+                {
                     "include": "#function-definitions"
                 },
                 {
@@ -93,6 +96,26 @@
                 }
             ]
         },
+        "class-definitions": {
+            "patterns": [
+                {
+                    "match": "(\\bclass\\b)\\s*(\\w+)\\s*\\{*$",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.class.rascript"
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                   "match": "\\w+",
+                                   "name": "entity.name.class.rascript"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
         "function-definitions": {
             "patterns": [
                 {
@@ -103,18 +126,6 @@
                         },
                         "2": {
                             "patterns": [
-                                {
-                                    "match": ".+[\\s]+.+",
-                                    "name": "invalid.illegal.identifier.rascript"
-                                },
-                                {
-                                    "match": "(?:.*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\,\\.\\<\\>\\/\\?]+.*)",
-                                    "name": "invalid.illegal.identifier.rascript"
-                                },
-                                {
-                                    "match": "[0-9][a-zA-Z0-9]*",
-                                    "name": "invalid.illegal.identifier.rascript"
-                                },
                                 {
                                    "match": "\\w+",
                                    "name": "entity.name.function.rascript"
