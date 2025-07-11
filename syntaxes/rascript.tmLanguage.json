@@ -37,6 +37,9 @@
                     "include": "#comments"
                 },
                 {
+                    "include": "#variable-language-this"
+                },
+                {
                     "include": "#variable-assignment"
                 },
                 {
@@ -198,6 +201,14 @@
                             ]
                         }
                     }
+                }
+            ]
+        },
+        "variable-language-this": {
+            "patterns": [
+                {
+                    "name": "variable.language.this.rascript",
+                    "match": "\\b(this)"
                 }
             ]
         },
