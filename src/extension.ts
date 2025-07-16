@@ -8,6 +8,7 @@ import {
 import { builtinFunctionDefinitions } from "./functionDefinitions";
 
 const G_FUNCTION_DEFINITION = /(\bfunction\b)\s*(\w+)\s*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
+const G_CLASS_DEFINITION = /(\bclass\b)\s*(\w+)\s*\{*/g; // keep in sync with syntax file rascript.tmLanguage.json #class-definitions regex
 const G_COMMENTS = new RegExp("^//.*$", "g");
 
 const G_BLOCK_COMMENTS_START = /^.*\/\*.*$/g;
@@ -112,6 +113,7 @@ function localExtension(context: vscode.ExtensionContext) {
 
   const hover = vscode.languages.registerHoverProvider("rascript", {
     provideHover(document: vscode.TextDocument, position: vscode.Position) {
+      let classes = new Map<string, vscode.Position>();
       let words = [];
       for (let i = 0; i < builtinFunctionDefinitions.length; i++) {
         let fn = builtinFunctionDefinitions[i];
@@ -120,6 +122,12 @@ function localExtension(context: vscode.ExtensionContext) {
       }
       let text = document.getText();
       let m: RegExpExecArray | null;
+      while ((m = G_CLASS_DEFINITION.exec(text))) {
+        let startPos = document.positionAt(m.index);
+        classes.set(m[2], startPos)
+      }
+      console.log(classes)
+      text = document.getText();
       let functionDefinitions = new Map<string, vscode.Position>();
       while ((m = G_FUNCTION_DEFINITION.exec(text))) {
         let pos = document.positionAt(m.index);
