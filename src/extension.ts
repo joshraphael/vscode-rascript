@@ -19,17 +19,16 @@ const G_STAR_BLOCK_COMMENT = /^\*.*/g; // starts with a star
 let client: LanguageClient;
 
 interface ClassScope {
-  start: vscode.Position;
-  end: vscode.Position;
+  start: number;
+  end: number;
+  functions: Map<string, vscode.Position>;
 }
 
-function newClassScope(
-  start: vscode.Position,
-  end: vscode.Position
-): ClassScope {
+function newClassScope(start: number, end: number): ClassScope {
   return {
     start: start,
     end: end,
+    functions: new Map<string, vscode.Position>(),
   };
 }
 
@@ -128,66 +127,24 @@ function localExtension(context: vscode.ExtensionContext) {
 
   const hover = vscode.languages.registerHoverProvider("rascript", {
     provideHover(document: vscode.TextDocument, position: vscode.Position) {
-      let classes = new Map<string, ClassScope>();
-      let words = [];
+      let words = new Map<string, HoverData[]>();
       for (let i = 0; i < builtinFunctionDefinitions.length; i++) {
         let fn = builtinFunctionDefinitions[i];
         let comment = fn.commentDoc.join("\n");
-        words.push(newHoverText(fn.key, comment, fn.url, ...fn.args));
+        let hover = newHoverText(fn.key, -1, "", comment, fn.url, ...fn.args);
+        let definitions = words.get(fn.key);
+        if (definitions !== undefined) {
+          definitions.push(hover);
+        } else {
+          words.set(fn.key, [hover]);
+        }
       }
       let text = document.getText();
       let m: RegExpExecArray | null;
-      while ((m = G_CLASS_DEFINITION.exec(text))) {
-        let startPos = document.positionAt(m.index);
-        // classes.set(m[2], startPos);
-        let postClassNameInd = m.index + 6 + m[2].length; // class(5) + [space](1) + [Class name](m[2].length)
-        let ind = postClassNameInd;
-        let stack = []; // makeshift stack to detect scope of class
-        while (ind < text.length) {
-          // anything other than white space or open curly brace is an error and we just wont parse this class
-          if (
-            text[ind] !== " " &&
-            text[ind] !== "\n" &&
-            text[ind] !== "\r" &&
-            text[ind] !== "\t" &&
-            text[ind] !== "{"
-          ) {
-            break;
-          }
-          if (text[ind] === "{") {
-            // get the position of the opening curly brace
-            stack.push(ind);
-            break;
-          }
-          ind++;
-        }
-        if (stack.length === 1) {
-          // if we have a curly brace scope, start parsing to find the end of the scope
-          let ind = stack[0] + 1; // next char after our first open curly brace
-          while (ind < text.length) {
-            if (text[ind] === "}") {
-              stack.pop();
-            } else if (text[ind] === "{") {
-              stack.push(ind);
-            }
-            let size = stack.length;
-            if (size === 0) {
-              // we have found our end position of the scope, break out
-              break;
-            }
-            ind++;
-          }
-          let endPos = document.positionAt(ind);
-          let scope = newClassScope(startPos, endPos);
-          classes.set(m[2], scope);
-        }
-      }
-      console.log(classes);
-      text = document.getText();
-      let functionDefinitions = new Map<string, vscode.Position>();
+      let classes = getClassData(text);
       while ((m = G_FUNCTION_DEFINITION.exec(text))) {
+        let className = detectClass(m.index, classes);
         let pos = document.positionAt(m.index);
-        functionDefinitions.set(m[2], pos);
         let comment = "";
         let untrimmedComment = ""; // This holds a second copy of the comments with leading stars
         let blockCommentStarStyle = true;
@@ -285,19 +242,115 @@ function localExtension(context: vscode.ExtensionContext) {
         }
         let args = m[3].split(",").map((s) => s.trim());
         if (blockCommentStarStyle) {
-          words.push(newHoverText(m[2], comment, "", ...args));
+          let hover = newHoverText(
+            m[2],
+            m.index,
+            className,
+            comment,
+            "",
+            ...args
+          );
+          let definitions = words.get(m[2]);
+          if (definitions !== undefined) {
+            definitions.push(hover);
+          } else {
+            words.set(m[2], [hover]);
+          }
         } else {
-          words.push(newHoverText(m[2], untrimmedComment, "", ...args));
+          let hover = newHoverText(
+            m[2],
+            m.index,
+            className,
+            untrimmedComment,
+            "",
+            ...args
+          );
+          let definitions = words.get(m[2]);
+          if (definitions !== undefined) {
+            definitions.push(hover);
+          } else {
+            words.set(m[2], [hover]);
+          }
         }
       }
       const range = document.getWordRangeAtPosition(position);
+      let startingPos = position;
+      if(range?.start !== undefined) {
+        startingPos = range.start
+      }
+      const startingOffset = document.offsetAt(startingPos);
       const word = document.getText(range);
+      const hoverClass = detectClass(startingOffset, classes);
+      let offset = startingOffset - 1; // get character just before the function name position
 
-      for (let i = 0; i < words.length; i++) {
-        if (words[i].key === word) {
-          return words[i].hover;
+      // Determine if this function is part of a class or global function
+      let global = true;
+      let usingThis = false;
+
+      while (global && offset >= 0) {
+        if (
+          text[offset] !== " " &&
+          text[offset] !== "\n" &&
+          text[offset] !== "\r" &&
+          text[offset] !== "\t" &&
+          text[offset] !== "."
+        ) {
+          break;
+        }
+        if (text[offset] === ".") {
+          if (
+            text[offset - 4] === "t" &&
+            text[offset - 3] === "h" &&
+            text[offset - 2] === "i" &&
+            text[offset - 1] === "s"
+          ) {
+            usingThis = true;
+          }
+          // in here means the previous non whitespace character next to the word hovered over is a dot which is the class attribute accessor operator
+          global = false;
+          break;
+        }
+        offset--;
+      }
+
+      let definitions = words.get(word);
+      if (definitions !== undefined) {
+        let filteredDefinitions = [];
+        for (let i = 0; i < definitions.length; i++) {
+          let definition = definitions[i];
+          // magic number 9 here is length of word function plus a space in between the function name
+          if (
+            startingOffset >= definition.index &&
+            startingOffset <= definition.index + 9 + definition.key.length
+          ) {
+            return definition.hover;
+          }
+        }
+        for (let i = 0; i < definitions.length; i++) {
+          let definition = definitions[i];
+
+          if (global) {
+            if (definition.className === "") {
+              filteredDefinitions.push(definition);
+            }
+          } else {
+            if (definition.className !== "") {
+              // Special case: we can determine the exact definition is the definition is using this.<className>
+              if (usingThis && hoverClass === definition.className) {
+                return definition.hover;
+              }
+              filteredDefinitions.push(definition);
+            }
+          }
+        }
+        if (filteredDefinitions.length === 1) {
+          return filteredDefinitions[0].hover;
+        } else {
+          // Special case: two functions in different classes are named the same and we cant determine the exact hover data
+          console.log(filteredDefinitions);
         }
       }
+
       return null;
     },
   });
@@ -337,6 +390,63 @@ export function deactivate(): Thenable<void> | undefined {
   return client.stop();
 }
 
+function detectClass(funcPos: number, classData: Map<string, ClassScope>) {
+  for (const [className, classScope] of classData) {
+    if (funcPos >= classScope.start && funcPos <= classScope.end) {
+      return className;
+    }
+  }
+  return "";
+}
+
+function getClassData(text: string) {
+  let classes = new Map<string, ClassScope>();
+  let m: RegExpExecArray | null;
+  while ((m = G_CLASS_DEFINITION.exec(text))) {
+    let postClassNameInd = m.index + 6 + m[2].length; // class(5) + [space](1) + [Class name](m[2].length)
+    let ind = postClassNameInd;
+    let stack = []; // makeshift stack to detect scope of class
+    while (ind < text.length) {
+      // anything other than white space or open curly brace is an error and we just wont parse this class
+      if (
+        text[ind] !== " " &&
+        text[ind] !== "\n" &&
+        text[ind] !== "\r" &&
+        text[ind] !== "\t" &&
+        text[ind] !== "{"
+      ) {
+        break;
+      }
+      if (text[ind] === "{") {
+        // get the position of the opening curly brace
+        stack.push(ind);
+        break;
+      }
+      ind++;
+    }
+    if (stack.length === 1) {
+      // if we have a curly brace scope, start parsing to find the end of the scope
+      let ind = stack[0] + 1; // next char after our first open curly brace
+      while (ind < text.length) {
+        if (text[ind] === "}") {
+          stack.pop();
+        } else if (text[ind] === "{") {
+          stack.push(ind);
+        }
+        let size = stack.length;
+        if (size === 0) {
+          // we have found our end position of the scope, break out
+          break;
+        }
+        ind++;
+      }
+      let scope = newClassScope(m.index, ind);
+      classes.set(m[2], scope);
+    }
+  }
+  return classes;
+}
+
 function newBuiltInFunction(name: string) {
   const snippetCompletion = new vscode.CompletionItem(name);
   snippetCompletion.insertText = new vscode.SnippetString(name + "()");
@@ -361,11 +471,15 @@ function newVariable(name: string) {
 
 interface HoverData {
   key: string;
+  index: number;
+  className: string;
   hover: vscode.Hover;
 }
 
 function newHoverText(
   key: string,
+  index: number,
+  className: string,
   text: string,
   docUrl: string,
   ...args: string[]
@@ -419,6 +533,8 @@ function newHoverText(
 
   return {
     key: key,
+    index: index,
+    className: className,
     hover: new vscode.Hover(lines),
   };
 }
