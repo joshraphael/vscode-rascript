@@ -18,6 +18,21 @@ const G_STAR_BLOCK_COMMENT = /^\*.*/g; // starts with a star
 
 let client: LanguageClient;
 
+interface ClassScope {
+  start: vscode.Position;
+  end: vscode.Position;
+}
+
+function newClassScope(
+  start: vscode.Position,
+  end: vscode.Position
+): ClassScope {
+  return {
+    start: start,
+    end: end,
+  };
+}
+
 export function activate(context: vscode.ExtensionContext) {
   const rascriptLanguageServer =
     vscode.workspace.getConfiguration("rascript").languageServer;
@@ -113,7 +128,7 @@ function localExtension(context: vscode.ExtensionContext) {
 
   const hover = vscode.languages.registerHoverProvider("rascript", {
     provideHover(document: vscode.TextDocument, position: vscode.Position) {
-      let classes = new Map<string, vscode.Position>();
+      let classes = new Map<string, ClassScope>();
       let words = [];
       for (let i = 0; i < builtinFunctionDefinitions.length; i++) {
         let fn = builtinFunctionDefinitions[i];
@@ -124,9 +139,50 @@ function localExtension(context: vscode.ExtensionContext) {
       let m: RegExpExecArray | null;
       while ((m = G_CLASS_DEFINITION.exec(text))) {
         let startPos = document.positionAt(m.index);
-        classes.set(m[2], startPos)
+        // classes.set(m[2], startPos);
+        let postClassNameInd = m.index + 6 + m[2].length; // class(5) + [space](1) + [Class name](m[2].length)
+        let ind = postClassNameInd;
+        let stack = []; // makeshift stack to detect scope of class
+        while (ind < text.length) {
+          // anything other than white space or open curly brace is an error and we just wont parse this class
+          if (
+            text[ind] !== " " &&
+            text[ind] !== "\n" &&
+            text[ind] !== "\r" &&
+            text[ind] !== "\t" &&
+            text[ind] !== "{"
+          ) {
+            break;
+          }
+          if (text[ind] === "{") {
+            // get the position of the opening curly brace
+            stack.push(ind);
+            break;
+          }
+          ind++;
+        }
+        if (stack.length === 1) {
+          // if we have a curly brace scope, start parsing to find the end of the scope
+          let ind = stack[0] + 1; // next char after our first open curly brace
+          while (ind < text.length) {
+            if (text[ind] === "}") {
+              stack.pop();
+            } else if (text[ind] === "{") {
+              stack.push(ind);
+            }
+            let size = stack.length;
+            if (size === 0) {
+              // we have found our end position of the scope, break out
+              break;
+            }
+            ind++;
+          }
+          let endPos = document.positionAt(ind);
+          let scope = newClassScope(startPos, endPos);
+          classes.set(m[2], scope);
+        }
       }
-      console.log(classes)
+      console.log(classes);
       text = document.getText();
       let functionDefinitions = new Map<string, vscode.Position>();
       while ((m = G_FUNCTION_DEFINITION.exec(text))) {
