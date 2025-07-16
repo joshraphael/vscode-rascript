@@ -275,8 +275,8 @@ function localExtension(context: vscode.ExtensionContext) {
       }
       const range = document.getWordRangeAtPosition(position);
       let startingPos = position;
-      if(range?.start !== undefined) {
-        startingPos = range.start
+      if (range?.start !== undefined) {
+        startingPos = range.start;
       }
       const startingOffset = document.offsetAt(startingPos);
       const word = document.getText(range);
