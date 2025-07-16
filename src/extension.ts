@@ -145,132 +145,21 @@ function localExtension(context: vscode.ExtensionContext) {
       while ((m = G_FUNCTION_DEFINITION.exec(text))) {
         let className = detectClass(m.index, classes);
         let pos = document.positionAt(m.index);
-        let comment = "";
-        let untrimmedComment = ""; // This holds a second copy of the comments with leading stars
-        let blockCommentStarStyle = true;
-        if (pos.line > 0) {
-          // dont look for comments if were at the top of the file
-          let offset = 1;
-          let inBlock = false;
-          // while not at the top of the file and the next line up is a comment
-          while (pos.line - offset >= 0) {
-            let lineNum = pos.line - offset;
-            let line = document.lineAt(new vscode.Position(lineNum, 0)).text;
-            line = line.trimStart();
-            if (offset === 1) {
-              // if were right above the function declaration, look for a block comment
-              let isBlock = G_BLOCK_COMMENTS_END.test(line);
-              G_BLOCK_COMMENTS_END.lastIndex = 0;
-              if (isBlock) {
-                inBlock = true;
-              }
-            }
-            if (inBlock) {
-              // handle block comments
-              let endBlock = G_BLOCK_COMMENTS_START.test(line);
-              G_BLOCK_COMMENTS_START.lastIndex = 0;
-              if (endBlock) {
-                // at the beginning of comment block
-
-                // TRIM START TOKEN
-                let trimmedLine = line.split(/\/\*(.*)/s); // use whats after the start token
-                let firstEl = trimmedLine.shift(); // remove text before commend block start
-                let newLine = trimmedLine.join("").trimStart();
-
-                // TRIM END TOKEN
-                trimmedLine = newLine.split("*/"); // use whats after the star token
-                if (trimmedLine.length > 2) {
-                  let firstEl = trimmedLine.pop();
-                }
-                newLine = trimmedLine.join("").trimStart();
-                if (blockCommentStarStyle) {
-                  let starComment = G_STAR_BLOCK_COMMENT.test(newLine);
-                  G_STAR_BLOCK_COMMENT.lastIndex = 0;
-                  if (!starComment) {
-                    blockCommentStarStyle = false;
-                  }
-                }
-                untrimmedComment = "//" + newLine + "\n" + untrimmedComment; // keep an untrimmed version of the comment in case the entire block is prefixed with stars
-
-                // TRIM FIRST '*' TOKEN (in case they comment that way)
-                trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the end token
-                if (trimmedLine.length > 2) {
-                  let firstEl = trimmedLine.shift(); // remove leading '*'
-                }
-                newLine = trimmedLine.join("").trimStart();
-                comment = "//" + newLine + "\n" + comment;
-                break;
-              } else {
-                // at end of comment block
-
-                // TRIM END TOKEN (guaranteed to not have text after end token if tthe user wants comments to appear in hover box)
-                let trimmedLine = line.split("*/"); // use whats after the end token
-                if (trimmedLine.length > 2) {
-                  let firstEl = trimmedLine.pop();
-                }
-                let newLine = trimmedLine.join("").trimStart();
-
-                if (blockCommentStarStyle) {
-                  let starComment = G_STAR_BLOCK_COMMENT.test(newLine);
-                  G_STAR_BLOCK_COMMENT.lastIndex = 0;
-                  if (!starComment) {
-                    blockCommentStarStyle = false;
-                  }
-                }
-                untrimmedComment = "//" + newLine + "\n" + untrimmedComment; // keep an untrimmed version of the comment in case the entire block is prefixed with stars
-
-                // TRIM FIRST '*' TOKEN (in case they comment that way)
-                trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the first star token
-                if (trimmedLine.length > 2) {
-                  let firstEl = trimmedLine.shift(); // remove leading '*'
-                }
-                newLine = trimmedLine.join("").trimStart();
-                comment = "//" + trimmedLine[0] + "\n" + comment;
-              }
-            } else {
-              // else handle single line block comments
-              let isComment = G_COMMENTS.test(line);
-              G_COMMENTS.lastIndex = 0;
-              if (isComment) {
-                comment = line + "\n" + comment;
-              } else {
-                break;
-              }
-            }
-            offset = offset + 1;
-          }
-        }
+        let comment = getCommentText(document, pos);
         let args = m[3].split(",").map((s) => s.trim());
-        if (blockCommentStarStyle) {
-          let hover = newHoverText(
-            m[2],
-            m.index,
-            className,
-            comment,
-            "",
-            ...args
-          );
-          let definitions = words.get(m[2]);
-          if (definitions !== undefined) {
-            definitions.push(hover);
-          } else {
-            words.set(m[2], [hover]);
-          }
+        let hover = newHoverText(
+          m[2],
+          m.index,
+          className,
+          comment,
+          "",
+          ...args
+        );
+        let definitions = words.get(m[2]);
+        if (definitions !== undefined) {
+          definitions.push(hover);
         } else {
-          let hover = newHoverText(
-            m[2],
-            m.index,
-            className,
-            untrimmedComment,
-            "",
-            ...args
-          );
-          let definitions = words.get(m[2]);
-          if (definitions !== undefined) {
-            definitions.push(hover);
-          } else {
-            words.set(m[2], [hover]);
-          }
+          words.set(m[2], [hover]);
         }
       }
       const range = document.getWordRangeAtPosition(position);
@@ -388,6 +277,112 @@ export function deactivate(): Thenable<void> | undefined {
     return undefined;
   }
   return client.stop();
+}
+
+function getCommentText(
+  document: vscode.TextDocument,
+  pos: vscode.Position
+): string {
+  let comment = "";
+  let untrimmedComment = ""; // This holds a second copy of the comments with leading stars
+  let blockCommentStarStyle = true;
+  if (pos.line > 0) {
+    // dont look for comments if were at the top of the file
+    let offset = 1;
+    let inBlock = false;
+    // while not at the top of the file and the next line up is a comment
+    while (pos.line - offset >= 0) {
+      let lineNum = pos.line - offset;
+      let line = document.lineAt(new vscode.Position(lineNum, 0)).text;
+      line = line.trimStart();
+      if (offset === 1) {
+        // if were right above the function declaration, look for a block comment
+        let isBlock = G_BLOCK_COMMENTS_END.test(line);
+        G_BLOCK_COMMENTS_END.lastIndex = 0;
+        if (isBlock) {
+          inBlock = true;
+        }
+      }
+      if (inBlock) {
+        // handle block comments
+        let endBlock = G_BLOCK_COMMENTS_START.test(line);
+        G_BLOCK_COMMENTS_START.lastIndex = 0;
+        if (endBlock) {
+          // at the beginning of comment block
+
+          // TRIM START TOKEN
+          let trimmedLine = line.split(/\/\*(.*)/s); // use whats after the start token
+          let firstEl = trimmedLine.shift(); // remove text before commend block start
+          let newLine = trimmedLine.join("").trimStart();
+
+          // TRIM END TOKEN
+          trimmedLine = newLine.split("*/"); // use whats after the star token
+          if (trimmedLine.length > 2) {
+            let firstEl = trimmedLine.pop();
+          }
+          newLine = trimmedLine.join("").trimStart();
+          if (blockCommentStarStyle) {
+            let starComment = G_STAR_BLOCK_COMMENT.test(newLine);
+            G_STAR_BLOCK_COMMENT.lastIndex = 0;
+            if (!starComment) {
+              blockCommentStarStyle = false;
+            }
+          }
+          untrimmedComment = "//" + newLine + "\n" + untrimmedComment; // keep an untrimmed version of the comment in case the entire block is prefixed with stars
+
+          // TRIM FIRST '*' TOKEN (in case they comment that way)
+          trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the end token
+          if (trimmedLine.length > 2) {
+            let firstEl = trimmedLine.shift(); // remove leading '*'
+          }
+          newLine = trimmedLine.join("").trimStart();
+          comment = "//" + newLine + "\n" + comment;
+          break;
+        } else {
+          // at end of comment block
+
+          // TRIM END TOKEN (guaranteed to not have text after end token if tthe user wants comments to appear in hover box)
+          let trimmedLine = line.split("*/"); // use whats after the end token
+          if (trimmedLine.length > 2) {
+            let firstEl = trimmedLine.pop();
+          }
+          let newLine = trimmedLine.join("").trimStart();
+
+          if (blockCommentStarStyle) {
+            let starComment = G_STAR_BLOCK_COMMENT.test(newLine);
+            G_STAR_BLOCK_COMMENT.lastIndex = 0;
+            if (!starComment) {
+              blockCommentStarStyle = false;
+            }
+          }
+          untrimmedComment = "//" + newLine + "\n" + untrimmedComment; // keep an untrimmed version of the comment in case the entire block is prefixed with stars
+
+          // TRIM FIRST '*' TOKEN (in case they comment that way)
+          trimmedLine = newLine.split(/^\*(.*)/s); // use whats after the first star token
+          if (trimmedLine.length > 2) {
+            let firstEl = trimmedLine.shift(); // remove leading '*'
+          }
+          newLine = trimmedLine.join("").trimStart();
+          comment = "//" + trimmedLine[0] + "\n" + comment;
+        }
+      } else {
+        // else handle single line block comments
+        let isComment = G_COMMENTS.test(line);
+        G_COMMENTS.lastIndex = 0;
+        if (isComment) {
+          comment = line + "\n" + comment;
+        } else {
+          break;
+        }
+      }
+      offset = offset + 1;
+    }
+  }
+  let finalComment = untrimmedComment;
+  if (blockCommentStarStyle) {
+    finalComment = comment;
+  }
+  return finalComment;
 }
 
 function detectClass(funcPos: number, classData: Map<string, ClassScope>) {
