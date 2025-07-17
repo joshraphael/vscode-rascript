@@ -208,6 +208,19 @@ function localExtension(context: vscode.ExtensionContext) {
       const hoverClass = detectClass(startingOffset, classes);
       let offset = startingOffset - 1; // get character just before the function name position
 
+      // Special case: this keyword should show the class hover info
+      if (word === "this") {
+        let definitions = words.get(hoverClass);
+        if (definitions !== undefined) {
+          for (let i = 0; i < definitions.length; i++) {
+            let definition = definitions[i];
+            if (definition.className === "") {
+              return definition.hover;
+            }
+          }
+        }
+      }
+
       // Determine if this function is part of a class or global function
       let global = true;
       let usingThis = false;
@@ -305,10 +318,14 @@ function localExtension(context: vscode.ExtensionContext) {
           completionItems.push(newBuiltInFunction(m[2]));
         }
         while ((m = G_VARIABLES.exec(text))) {
-          completionItems.push(newCompletion(m[1], vscode.CompletionItemKind.Variable));
+          completionItems.push(
+            newCompletion(m[1], vscode.CompletionItemKind.Variable)
+          );
         }
         for (const [className, classScope] of classes) {
-          completionItems.push(newCompletion(className, vscode.CompletionItemKind.Class));
+          completionItems.push(
+            newCompletion(className, vscode.CompletionItemKind.Class)
+          );
         }
         return completionItems;
       },
@@ -514,10 +531,7 @@ function newBuiltInFunction(name: string) {
 }
 
 function newCompletion(name: string, kind: vscode.CompletionItemKind) {
-  const snippetCompletion = new vscode.CompletionItem(
-    name,
-    kind
-  );
+  const snippetCompletion = new vscode.CompletionItem(name, kind);
 
   return snippetCompletion;
 }
