@@ -299,14 +299,17 @@ function localExtension(context: vscode.ExtensionContext) {
           completionItems.push(newBuiltInFunction(fn.key));
         }
         let text = document.getText();
+        let classes = getClassData(text);
         let m: RegExpExecArray | null;
         while ((m = G_FUNCTION_DEFINITION.exec(text))) {
           completionItems.push(newBuiltInFunction(m[2]));
         }
         while ((m = G_VARIABLES.exec(text))) {
-          completionItems.push(newVariable(m[1]));
+          completionItems.push(newCompletion(m[1], vscode.CompletionItemKind.Variable));
         }
-
+        for (const [className, classScope] of classes) {
+          completionItems.push(newCompletion(className, vscode.CompletionItemKind.Class));
+        }
         return completionItems;
       },
     }
@@ -510,10 +513,10 @@ function newBuiltInFunction(name: string) {
   return snippetCompletion;
 }
 
-function newVariable(name: string) {
+function newCompletion(name: string, kind: vscode.CompletionItemKind) {
   const snippetCompletion = new vscode.CompletionItem(
     name,
-    vscode.CompletionItemKind.Variable
+    kind
   );
 
   return snippetCompletion;
