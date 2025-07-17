@@ -15,6 +15,8 @@ const G_BLOCK_COMMENTS_START = /^.*\/\*.*$/g;
 const G_BLOCK_COMMENTS_END = /^.*\*\/$/g;
 const G_VARIABLES = /(\w+)\s*=/g;
 const G_STAR_BLOCK_COMMENT = /^\*.*/g; // starts with a star
+const G_FUNTION = "function";
+const G_CLASS = "class";
 
 let client: LanguageClient;
 
@@ -22,13 +24,19 @@ interface ClassScope {
   start: number;
   end: number;
   functions: Map<string, vscode.Position>;
+  constructorArgs: string[];
 }
 
-function newClassScope(start: number, end: number): ClassScope {
+function newClassScope(
+  start: number,
+  end: number,
+  ...constructorArgs: string[]
+): ClassScope {
   return {
     start: start,
     end: end,
     functions: new Map<string, vscode.Position>(),
+    constructorArgs: constructorArgs,
   };
 }
 
@@ -131,7 +139,15 @@ function localExtension(context: vscode.ExtensionContext) {
       for (let i = 0; i < builtinFunctionDefinitions.length; i++) {
         let fn = builtinFunctionDefinitions[i];
         let comment = fn.commentDoc.join("\n");
-        let hover = newHoverText(fn.key, -1, "", comment, fn.url, ...fn.args);
+        let hover = newHoverText(
+          fn.key,
+          -1,
+          G_FUNTION,
+          "",
+          comment,
+          fn.url,
+          ...fn.args
+        );
         let definitions = words.get(fn.key);
         if (definitions !== undefined) {
           definitions.push(hover);
@@ -142,6 +158,25 @@ function localExtension(context: vscode.ExtensionContext) {
       let text = document.getText();
       let m: RegExpExecArray | null;
       let classes = getClassData(text);
+      for (const [className, classScope] of classes) {
+        let pos = document.positionAt(classScope.start);
+        let comment = getCommentText(document, pos);
+        let hover = newHoverText(
+          className,
+          classScope.start,
+          G_CLASS,
+          "",
+          comment,
+          "",
+          ...classScope.constructorArgs
+        );
+        let definitions = words.get(className);
+        if (definitions !== undefined) {
+          definitions.push(hover);
+        } else {
+          words.set(className, [hover]);
+        }
+      }
       while ((m = G_FUNCTION_DEFINITION.exec(text))) {
         let className = detectClass(m.index, classes);
         let pos = document.positionAt(m.index);
@@ -150,6 +185,7 @@ function localExtension(context: vscode.ExtensionContext) {
         let hover = newHoverText(
           m[2],
           m.index,
+          G_FUNTION,
           className,
           comment,
           "",
@@ -236,7 +272,14 @@ function localExtension(context: vscode.ExtensionContext) {
           return filteredDefinitions[0].hover;
         } else {
           // Special case: two functions in different classes are named the same and we cant determine the exact hover data
-          console.log(filteredDefinitions);
+          let lines = [];
+          for (let i = 0; i < filteredDefinitions.length; i++) {
+            let definition = filteredDefinitions[i];
+            lines.push(
+              `${definition.className}.${definition.key} @ ${definition.index}`
+            );
+          }
+          return new vscode.Hover(lines);
         }
       }
 
@@ -401,6 +444,7 @@ function getClassData(text: string) {
     let postClassNameInd = m.index + 6 + m[2].length; // class(5) + [space](1) + [Class name](m[2].length)
     let ind = postClassNameInd;
     let stack = []; // makeshift stack to detect scope of class
+    let strippedText = ""; // this is used to determine the implicit arguments to a class constructor
     while (ind < text.length) {
       // anything other than white space or open curly brace is an error and we just wont parse this class
       if (
@@ -427,6 +471,12 @@ function getClassData(text: string) {
           stack.pop();
         } else if (text[ind] === "{") {
           stack.push(ind);
+        } else {
+          let size = stack.length;
+          if (size === 1) {
+            // if the code is at the first level of the class (not in a function) append it to our stripped class
+            strippedText = strippedText + text[ind];
+          }
         }
         let size = stack.length;
         if (size === 0) {
@@ -435,7 +485,12 @@ function getClassData(text: string) {
         }
         ind++;
       }
-      let scope = newClassScope(m.index, ind);
+      let args = [];
+      let m2: RegExpExecArray | null;
+      while ((m2 = G_VARIABLES.exec(strippedText))) {
+        args.push(m2[1]);
+      }
+      let scope = newClassScope(m.index, ind, ...args);
       classes.set(m[2], scope);
     }
   }
@@ -474,6 +529,7 @@ interface HoverData {
 function newHoverText(
   key: string,
   index: number,
+  type: string,
   className: string,
   text: string,
   docUrl: string,
@@ -481,7 +537,17 @@ function newHoverText(
 ): HoverData {
   let argStr = args.join(", ");
   let commentLines = text.split(/\r?\n/);
-  let lines = [`\`\`\`rascript\nfunction ${key}(${argStr})\n\`\`\``];
+  let lines = [];
+  let prefix = "function ";
+  if (className !== "") {
+    prefix = `// class ${className}\nfunction `;
+  }
+  lines.push(`\`\`\`rascript\n${prefix}${key}(${argStr})\n\`\`\``);
+  if (type === G_CLASS) {
+    let fnLine = lines[0];
+    lines = [`\`\`\`rascript\nclass ${key}\n\`\`\``];
+    lines.push(fnLine);
+  }
   if (text !== "") {
     lines.push("---");
     let curr = "";
