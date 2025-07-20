@@ -27,6 +27,12 @@ interface ClassScope {
   constructorArgs: string[];
 }
 
+interface CommentBounds {
+  start: number;
+  end: number;
+  type: string;
+}
+
 function newClassScope(
   start: number,
   end: number,
@@ -157,6 +163,67 @@ function localExtension(context: vscode.ExtensionContext) {
       }
       let text = document.getText();
       let m: RegExpExecArray | null;
+      // get bounds of single line comments
+      let commentBounds: CommentBounds[] = [];
+      let inComment = false;
+      let tempStart = 0;
+      for (let i = 0; i < text.length - 1; i++) {
+        if (inComment) {
+          if (text[i] === "\n" || text === "\r") {
+            inComment = false;
+            commentBounds.push({
+              start: tempStart,
+              end: i,
+              type: "Line",
+            });
+          }
+        } else {
+          if (text[i - 1] + text[i] === "//") {
+            inComment = true;
+            tempStart = i - 1;
+          }
+        }
+        if (i === text.length - 1 && inComment) {
+          inComment = false;
+          commentBounds.push({
+            start: tempStart,
+            end: i,
+            type: "Line",
+          });
+        }
+      }
+      // parse different comment types seperately incase they are mixed together,
+      // the bounds between these two could overlap technically
+
+      // get bounds of block comments
+      inComment = false;
+      tempStart = 0;
+      for (let i = 1; i < text.length; i++) {
+        if (inComment) {
+          if (text[i - 1] + text[i] === "*/") {
+            inComment = false;
+            commentBounds.push({
+              start: tempStart,
+              end: i,
+              type: "Block",
+            });
+          }
+        } else {
+          if (text[i - 1] + text[i] === "/*") {
+            inComment = true;
+            tempStart = i - 1;
+          }
+        }
+        if (i === text.length - 1 && inComment) {
+          inComment = false;
+          commentBounds.push({
+            start: tempStart,
+            end: i,
+            type: "Block",
+          });
+        }
+      }
+      console.log(commentBounds);
       let classes = getClassData(text);
       for (const [className, classScope] of classes) {
         let pos = document.positionAt(classScope.start);
