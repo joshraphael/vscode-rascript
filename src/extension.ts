@@ -31,6 +31,7 @@ interface CommentBounds {
   start: number;
   end: number;
   type: string;
+  raw: string;
 }
 
 function newClassScope(
@@ -175,6 +176,7 @@ function localExtension(context: vscode.ExtensionContext) {
               start: tempStart,
               end: i,
               type: "Line",
+              raw: text.slice(tempStart, i + 1),
             });
           }
         } else {
@@ -189,6 +191,7 @@ function localExtension(context: vscode.ExtensionContext) {
             start: tempStart,
             end: i,
             type: "Line",
+            raw: text.slice(tempStart, i + 1),
           });
         }
       }
@@ -206,6 +209,7 @@ function localExtension(context: vscode.ExtensionContext) {
               start: tempStart,
               end: i,
               type: "Block",
+              raw: text.slice(tempStart, i + 1),
             });
           }
         } else {
@@ -220,6 +224,7 @@ function localExtension(context: vscode.ExtensionContext) {
             start: tempStart,
             end: i,
             type: "Block",
+            raw: text.slice(tempStart, i + 1),
           });
         }
       }
