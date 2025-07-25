@@ -167,6 +167,40 @@ function classFilter(global: boolean, usingThis: boolean, className: string) {
   };
 }
 
+function getScope(text: string, startingOffset: number): [boolean, boolean] {
+  // Determine if this function is part of a class or global function
+  let global = true;
+  let usingThis = false;
+  let offset = startingOffset - 1;
+
+  while (global && offset >= 0) {
+    if (
+      text[offset] !== " " &&
+      text[offset] !== "\n" &&
+      text[offset] !== "\r" &&
+      text[offset] !== "\t" &&
+      text[offset] !== "."
+    ) {
+      break;
+    }
+    if (text[offset] === ".") {
+      if (
+        text[offset - 4] === "t" &&
+        text[offset - 3] === "h" &&
+        text[offset - 2] === "i" &&
+        text[offset - 1] === "s"
+      ) {
+        usingThis = true;
+      }
+      // in here means the previous non whitespace character next to the word hovered over is a dot which is the class attribute accessor operator
+      global = false;
+      break;
+    }
+    offset--;
+  }
+  return [global, usingThis];
+}
+
 function localExtension(context: vscode.ExtensionContext) {
   const definitions = vscode.languages.registerDefinitionProvider("rascript", {
     provideDefinition(document, position, token) {
@@ -202,34 +236,7 @@ function localExtension(context: vscode.ExtensionContext) {
           origOffset = document.offsetAt(range.start);
         }
         let offset = origOffset - 1;
-        let global = true;
-        let usingThis = false;
-
-        while (global && offset >= 0) {
-          if (
-            text[offset] !== " " &&
-            text[offset] !== "\n" &&
-            text[offset] !== "\r" &&
-            text[offset] !== "\t" &&
-            text[offset] !== "."
-          ) {
-            break;
-          }
-          if (text[offset] === ".") {
-            if (
-              text[offset - 4] === "t" &&
-              text[offset - 3] === "h" &&
-              text[offset - 2] === "i" &&
-              text[offset - 1] === "s"
-            ) {
-              usingThis = true;
-            }
-            // in here means the previous non whitespace character next to the word hovered over is a dot which is the class attribute accessor operator
-            global = false;
-            break;
-          }
-          offset--;
-        }
+        const [global, usingThis] = getScope(text, origOffset)
         let list = functionDefinitions1.get(word) || [];
         let filteredList = list.filter(
           classFilter(global, usingThis, detectClass(origWordOffset, classes))
@@ -400,36 +407,7 @@ function localExtension(context: vscode.ExtensionContext) {
           }
         }
       }
-
-      // Determine if this function is part of a class or global function
-      let global = true;
-      let usingThis = false;
-
-      while (global && offset >= 0) {
-        if (
-          text[offset] !== " " &&
-          text[offset] !== "\n" &&
-          text[offset] !== "\r" &&
-          text[offset] !== "\t" &&
-          text[offset] !== "."
-        ) {
-          break;
-        }
-        if (text[offset] === ".") {
-          if (
-            text[offset - 4] === "t" &&
-            text[offset - 3] === "h" &&
-            text[offset - 2] === "i" &&
-            text[offset - 1] === "s"
-          ) {
-            usingThis = true;
-          }
-          // in here means the previous non whitespace character next to the word hovered over is a dot which is the class attribute accessor operator
-          global = false;
-          break;
-        }
-        offset--;
-      }
+      const [global, usingThis] = getScope(text, startingOffset)
 
       let definitions = words.get(word);
       if (definitions !== undefined) {
