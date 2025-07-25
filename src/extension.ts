@@ -23,7 +23,7 @@ let client: LanguageClient;
 interface ClassScope {
   start: number;
   end: number;
-  functions: Map<string, vscode.Position>;
+  functions: Map<string, FunctionDefinition>;
   constructorArgs: string[];
 }
 
@@ -34,6 +34,12 @@ interface CommentBounds {
   raw: string;
 }
 
+interface FunctionDefinition {
+  name: string;
+  pos: vscode.Position;
+  args: string[];
+}
+
 function newClassScope(
   start: number,
   end: number,
@@ -42,9 +48,46 @@ function newClassScope(
   return {
     start: start,
     end: end,
-    functions: new Map<string, vscode.Position>(),
+    functions: new Map<string, FunctionDefinition>(),
     constructorArgs: constructorArgs,
   };
+}
+
+interface ClassFunction {
+  className: string;
+  name: string;
+  pos: vscode.Position;
+  args: string[];
+}
+
+function createClassFunction(
+  className: string,
+  name: string,
+  pos: vscode.Position,
+  ...args: string[]
+): ClassFunction {
+  return {
+    className: className,
+    name: name,
+    pos: pos,
+    args: args,
+  };
+}
+
+function addFunctionToClassScope(
+  classes: Map<string, ClassScope>,
+  className: string,
+  fnName: string,
+  pos: vscode.Position,
+  ...constructorArgs: string[]
+) {
+  let fn: FunctionDefinition = {
+    name: fnName,
+    pos: pos,
+    args: constructorArgs,
+  };
+  classes.get(className)?.functions.set(fnName, fn);
+  console.log(classes.get(className));
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -113,27 +156,91 @@ function languageServer(
     });
 }
 
+function classFilter(global: boolean, usingThis: boolean, className: string) {
+    return function(el: ClassFunction) {
+          if (global) {
+            return el.className === "";
+          } else if (usingThis) {
+            return el.className === className;
+          }
+          return el.className !== "";
+    }
+}
+
 function localExtension(context: vscode.ExtensionContext) {
   const definitions = vscode.languages.registerDefinitionProvider("rascript", {
     provideDefinition(document, position, token) {
       let text = document.getText();
       const range = document.getWordRangeAtPosition(position);
       const word = document.getText(range);
+      const origWordOffset = document.offsetAt(position);
+      let classes = getClassData(text);
       let m: RegExpExecArray | null;
-      let functionDefinitions = new Map<string, vscode.Position>();
+      let functionDefinitions1 = new Map<string, ClassFunction[]>();
       while ((m = G_FUNCTION_DEFINITION.exec(text))) {
         let pos = document.positionAt(m.index);
-        functionDefinitions.set(m[2], pos);
+        let list = functionDefinitions1.get(m[2]);
+        let a = m[3].split(",").map((s) => s.trim());
+        var args = a.filter(function (el) {
+          return el !== null && el !== "" && el !== undefined;
+        });
+        let item = createClassFunction(
+          detectClass(m.index, classes),
+          m[2],
+          pos,
+          ...args
+        );
+        if (list !== undefined) {
+          list.push(item);
+        } else {
+          functionDefinitions1.set(m[2], [item]);
+        }
       }
-      if (functionDefinitions.has(word)) {
-        let pos = functionDefinitions.get(word);
-        if (pos !== undefined) {
-          let r = new vscode.Range(pos, pos);
-          const locLink: vscode.LocationLink = {
-            targetRange: r,
-            targetUri: document.uri,
-          };
-          return [locLink];
+      if (functionDefinitions1.has(word)) {
+        let origOffset = document.offsetAt(position);
+        if (range?.start !== undefined) {
+          origOffset = document.offsetAt(range.start);
+        }
+        let offset = origOffset - 1;
+        let global = true;
+        let usingThis = false;
+
+        while (global && offset >= 0) {
+          if (
+            text[offset] !== " " &&
+            text[offset] !== "\n" &&
+            text[offset] !== "\r" &&
+            text[offset] !== "\t" &&
+            text[offset] !== "."
+          ) {
+            break;
+          }
+          if (text[offset] === ".") {
+            if (
+              text[offset - 4] === "t" &&
+              text[offset - 3] === "h" &&
+              text[offset - 2] === "i" &&
+              text[offset - 1] === "s"
+            ) {
+              usingThis = true;
+            }
+            // in here means the previous non whitespace character next to the word hovered over is a dot which is the class attribute accessor operator
+            global = false;
+            break;
+          }
+          offset--;
+        }
+        let list = functionDefinitions1.get(word) || [];
+        let filteredList = list.filter(classFilter(global, usingThis, detectClass(origWordOffset, classes)));
+        // can only link to one location, so anything that has multiple definitions wont work for code jumping
+        if(filteredList.length === 1) {
+          let el = filteredList[0]
+          let r = new vscode.Range(el.pos, el.pos);
+            const locLink: vscode.LocationLink = {
+              targetRange: r,
+              targetUri: document.uri,
+            };
+          return [locLink]
         }
       }
       return null;
@@ -228,7 +335,6 @@ function localExtension(context: vscode.ExtensionContext) {
           });
         }
       }
-      console.log(commentBounds);
       let classes = getClassData(text);
       for (const [className, classScope] of classes) {
         let pos = document.positionAt(classScope.start);
