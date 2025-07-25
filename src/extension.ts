@@ -157,14 +157,14 @@ function languageServer(
 }
 
 function classFilter(global: boolean, usingThis: boolean, className: string) {
-    return function(el: ClassFunction) {
-          if (global) {
-            return el.className === "";
-          } else if (usingThis) {
-            return el.className === className;
-          }
-          return el.className !== "";
+  return function (el: ClassFunction) {
+    if (global) {
+      return el.className === "";
+    } else if (usingThis) {
+      return el.className === className;
     }
+    return el.className !== "";
+  };
 }
 
 function localExtension(context: vscode.ExtensionContext) {
@@ -231,16 +231,18 @@ function localExtension(context: vscode.ExtensionContext) {
           offset--;
         }
         let list = functionDefinitions1.get(word) || [];
-        let filteredList = list.filter(classFilter(global, usingThis, detectClass(origWordOffset, classes)));
+        let filteredList = list.filter(
+          classFilter(global, usingThis, detectClass(origWordOffset, classes))
+        );
         // can only link to one location, so anything that has multiple definitions wont work for code jumping
-        if(filteredList.length === 1) {
-          let el = filteredList[0]
+        if (filteredList.length === 1) {
+          let el = filteredList[0];
           let r = new vscode.Range(el.pos, el.pos);
-            const locLink: vscode.LocationLink = {
-              targetRange: r,
-              targetUri: document.uri,
-            };
-          return [locLink]
+          const locLink: vscode.LocationLink = {
+            targetRange: r,
+            targetUri: document.uri,
+          };
+          return [locLink];
         }
       }
       return null;
