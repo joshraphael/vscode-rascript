@@ -126,7 +126,7 @@
         "function-definitions": {
             "patterns": [
                 {
-                    "match": "(\\bfunction\\b)\\s*(([a-zA-Z][\\w]*)|(.+))\\s*\\((.*)\\)",
+                    "match": "(\\bfunction\\b)\\s*(([a-zA-Z][\\w]*)|(.+))\\s*\\(([^\\(\\)]*)\\)",
                     "captures": {
                         "1": {
                             "name": "keyword.function.rascript"

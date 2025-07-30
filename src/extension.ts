@@ -74,22 +74,6 @@ function createClassFunction(
   };
 }
 
-function addFunctionToClassScope(
-  classes: Map<string, ClassScope>,
-  className: string,
-  fnName: string,
-  pos: vscode.Position,
-  ...constructorArgs: string[]
-) {
-  let fn: FunctionDefinition = {
-    name: fnName,
-    pos: pos,
-    args: constructorArgs,
-  };
-  classes.get(className)?.functions.set(fnName, fn);
-  console.log(classes.get(className));
-}
-
 export function activate(context: vscode.ExtensionContext) {
   const rascriptLanguageServer =
     vscode.workspace.getConfiguration("rascript").languageServer;
@@ -210,10 +194,10 @@ function localExtension(context: vscode.ExtensionContext) {
       const origWordOffset = document.offsetAt(position);
       let classes = getClassData(text);
       let m: RegExpExecArray | null;
-      let functionDefinitions1 = new Map<string, ClassFunction[]>();
+      let functionDefinitions = new Map<string, ClassFunction[]>();
       while ((m = G_FUNCTION_DEFINITION.exec(text))) {
         let pos = document.positionAt(m.index);
-        let list = functionDefinitions1.get(m[2]);
+        let list = functionDefinitions.get(m[2]);
         let a = m[3].split(",").map((s) => s.trim());
         var args = a.filter(function (el) {
           return el !== null && el !== "" && el !== undefined;
@@ -227,17 +211,17 @@ function localExtension(context: vscode.ExtensionContext) {
         if (list !== undefined) {
           list.push(item);
         } else {
-          functionDefinitions1.set(m[2], [item]);
+          functionDefinitions.set(m[2], [item]);
         }
       }
-      if (functionDefinitions1.has(word)) {
+      if (functionDefinitions.has(word)) {
         let origOffset = document.offsetAt(position);
         if (range?.start !== undefined) {
           origOffset = document.offsetAt(range.start);
         }
         let offset = origOffset - 1;
-        const [global, usingThis] = getScope(text, origOffset)
-        let list = functionDefinitions1.get(word) || [];
+        const [global, usingThis] = getScope(text, origOffset);
+        let list = functionDefinitions.get(word) || [];
         let filteredList = list.filter(
           classFilter(global, usingThis, detectClass(origWordOffset, classes))
         );
@@ -407,7 +391,7 @@ function localExtension(context: vscode.ExtensionContext) {
           }
         }
       }
-      const [global, usingThis] = getScope(text, startingOffset)
+      const [global, usingThis] = getScope(text, startingOffset);
 
       let definitions = words.get(word);
       if (definitions !== undefined) {
