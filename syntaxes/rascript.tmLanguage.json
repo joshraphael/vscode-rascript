@@ -102,7 +102,7 @@
         "class-definitions": {
             "patterns": [
                 {
-                    "match": "(\\bclass\\b)\\s*(\\w+)\\s*\\{*",
+                    "match": "(\\bclass\\b)[\\t ]*(\\w+)\\s*\\{*",
                     "captures": {
                         "1": {
                             "name": "keyword.class.rascript"
@@ -126,7 +126,7 @@
         "function-definitions": {
             "patterns": [
                 {
-                    "match": "(\\bfunction\\b)\\s*(([a-zA-Z][\\w]*)|(.+))\\s*\\(([^\\(\\)]*)\\)",
+                    "match": "(\\bfunction\\b)[\\t ]*(([a-zA-Z][\\w]*)|(.+))[\\t ]*\\(([^\\(\\)]*)\\)",
                     "captures": {
                         "1": {
                             "name": "keyword.function.rascript"
