@@ -7,7 +7,8 @@ import {
 } from "vscode-languageclient/node";
 import { builtinFunctionDefinitions } from "./functionDefinitions";
 
-const G_FUNCTION_DEFINITION = /(\bfunction\b)[\t ]*([a-zA-Z][\w]*)[\t ]*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
+const G_FUNCTION_DEFINITION =
+  /(\bfunction\b)[\t ]*([a-zA-Z][\w]*)[\t ]*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
 const G_CLASS_DEFINITION = /(\bclass\b)[\t ]*(\w+)\s*\{*/g; // keep in sync with syntax file rascript.tmLanguage.json #class-definitions regex
 const G_COMMENTS = new RegExp("^//.*$", "g");
 
