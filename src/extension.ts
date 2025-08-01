@@ -428,7 +428,7 @@ function localExtension(context: vscode.ExtensionContext) {
             }
           } else {
             if (definition.className !== "") {
-              // Special case: we can determine the exact definition is the definition is using this.<className>
+              // Special case: we can determine the exact definition is the definition if using this.<className>
               if (usingThis && hoverClass === definition.className) {
                 return definition.hover;
               }
@@ -461,27 +461,42 @@ function localExtension(context: vscode.ExtensionContext) {
         document: vscode.TextDocument,
         position: vscode.Position
       ) {
-        let completionItems = [];
+        let completionFunctions = [];
+        let completionVariables = [];
+        let completionClasses = [];
+        let completionItems: vscode.CompletionItem[] = [];
         for (let i = 0; i < builtinFunctionDefinitions.length; i++) {
           let fn = builtinFunctionDefinitions[i];
-          completionItems.push(newBuiltInFunction(fn.key));
+          completionFunctions.push(fn.key);
         }
         let text = document.getText();
         let classes = getClassData(text);
         let m: RegExpExecArray | null;
         while ((m = G_FUNCTION_DEFINITION.exec(text))) {
-          completionItems.push(newBuiltInFunction(m[2]));
+          completionFunctions.push(m[2]);
         }
+        let functionSet: Set<string> = new Set(completionFunctions);
+        functionSet.forEach((fnName: string) => {
+          completionItems.push(newBuiltInFunction(fnName));
+        });
         while ((m = G_VARIABLES.exec(text))) {
-          completionItems.push(
-            newCompletion(m[1], vscode.CompletionItemKind.Variable)
-          );
+          completionVariables.push(m[1]);
         }
+        let variableSet: Set<string> = new Set(completionVariables);
+        variableSet.forEach((varName: string) => {
+          completionItems.push(
+            newCompletion(varName, vscode.CompletionItemKind.Variable)
+          );
+        });
         for (const [className, classScope] of classes) {
+          completionClasses.push(className);
+        }
+        let classSet: Set<string> = new Set(completionClasses);
+        classSet.forEach((className: string) => {
           completionItems.push(
             newCompletion(className, vscode.CompletionItemKind.Class)
           );
-        }
+        });
         return completionItems;
       },
     }
