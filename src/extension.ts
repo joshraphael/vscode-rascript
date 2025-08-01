@@ -152,6 +152,42 @@ function classFilter(global: boolean, usingThis: boolean, className: string) {
   };
 }
 
+function getWordType(
+  text: string,
+  startingOffset: number,
+  endingOffset: number
+): [boolean, boolean] {
+  let fn = false;
+  let cls = false;
+
+  // check for function
+  if (text[endingOffset] === "(") {
+    fn = true;
+  }
+
+  // check for previous word being class
+  let offset = startingOffset - 1;
+  while (global && offset - 4 >= 0) {
+    if (text[offset] !== " " && text[offset] !== "\t" && text[offset] !== "s") {
+      break;
+    }
+    if (text[offset] === "s") {
+      if (
+        text[offset - 4] === "c" &&
+        text[offset - 3] === "l" &&
+        text[offset - 2] === "a" &&
+        text[offset - 1] === "s" &&
+        text[offset] === "s"
+      ) {
+        cls = true;
+      }
+      break;
+    }
+    offset--;
+  }
+  return [fn, cls];
+}
+
 function getScope(text: string, startingOffset: number): [boolean, boolean] {
   // Determine if this function is part of a class or global function
   let global = true;
@@ -381,7 +417,12 @@ function localExtension(context: vscode.ExtensionContext) {
       if (range?.start !== undefined) {
         startingPos = range.start;
       }
+      let endingPos = position;
+      if (range?.end !== undefined) {
+        endingPos = range.end;
+      }
       const startingOffset = document.offsetAt(startingPos);
+      const endingOffset = document.offsetAt(endingPos);
       const word = document.getText(range);
       const hoverClass = detectClass(startingOffset, classes);
       let offset = startingOffset - 1; // get character just before the function name position
@@ -402,11 +443,10 @@ function localExtension(context: vscode.ExtensionContext) {
 
       let definitions = words.get(word);
       if (definitions !== undefined) {
-        if (range !== undefined) {
-          let endOffset = document.offsetAt(range.end);
-          if (text[endOffset] !== "(") {
-            return null; // not a function
-          }
+        const [fn, cls] = getWordType(text, startingOffset, endingOffset);
+        if (!fn && !cls) {
+          // only provide hover data for classes and functions
+          return null;
         }
         let filteredDefinitions = [];
         for (let i = 0; i < definitions.length; i++) {
