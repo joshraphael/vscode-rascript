@@ -216,6 +216,12 @@ function localExtension(context: vscode.ExtensionContext) {
         }
       }
       if (functionDefinitions.has(word)) {
+        if (range !== undefined) {
+          let endOffset = document.offsetAt(range.end);
+          if (text[endOffset] !== "(") {
+            return null; // not a function
+          }
+        }
         let origOffset = document.offsetAt(position);
         if (range?.start !== undefined) {
           origOffset = document.offsetAt(range.start);
@@ -266,7 +272,7 @@ function localExtension(context: vscode.ExtensionContext) {
       let text = document.getText();
       let m: RegExpExecArray | null;
       // get bounds of single line comments
-      let commentBounds: CommentBounds[] = [];
+      let commentBounds: CommentBounds[] = []; // currently unused, it may be useful in the future
       let inComment = false;
       let tempStart = 0;
       for (let i = 0; i < text.length - 1; i++) {
@@ -396,6 +402,12 @@ function localExtension(context: vscode.ExtensionContext) {
 
       let definitions = words.get(word);
       if (definitions !== undefined) {
+        if (range !== undefined) {
+          let endOffset = document.offsetAt(range.end);
+          if (text[endOffset] !== "(") {
+            return null; // not a function
+          }
+        }
         let filteredDefinitions = [];
         for (let i = 0; i < definitions.length; i++) {
           let definition = definitions[i];
