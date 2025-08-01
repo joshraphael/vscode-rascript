@@ -6,7 +6,6 @@ import {
   ServerOptions,
 } from "vscode-languageclient/node";
 import { builtinFunctionDefinitions } from "./functionDefinitions";
-import { off } from "process";
 
 const G_FUNCTION_DEFINITION =
   /(\bfunction\b)[\t ]*([a-zA-Z][\w]*)[\t ]*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
@@ -169,7 +168,7 @@ function getWordType(
 
   // check for previous word being class
   let offset = startingOffset - 1;
-  while (global && offset >= 0) {
+  while (offset >= 0) {
     if (text[offset] !== " " && text[offset] !== "\t" && text[offset] !== "s") {
       break;
     }
@@ -215,6 +214,28 @@ function getScope(
     offset--;
   }
   return [global, usingThis];
+}
+
+function countArgsAt(document: vscode.TextDocument, offset: number) {
+  let text = document.getText();
+  let count = 0;
+  if (text[offset] === "(") {
+    offset++;
+    while (offset < text.length) {
+      if (text[offset] === ")") {
+        break;
+      }
+      if (count === 0) {
+        count = 1;
+      } else {
+        if (text[offset] === ",") {
+          count++;
+        }
+      }
+      offset++;
+    }
+  }
+  return count;
 }
 
 function localExtension(context: vscode.ExtensionContext) {
@@ -390,7 +411,10 @@ function localExtension(context: vscode.ExtensionContext) {
         let className = detectClass(m.index, classes);
         let pos = document.positionAt(m.index);
         let comment = getCommentText(document, pos);
-        let args = m[3].split(",").map((s) => s.trim());
+        let a = m[3].split(",").map((s) => s.trim());
+        var args = a.filter(function (el) {
+          return el !== null && el !== "" && el !== undefined;
+        });
         let hover = newHoverText(
           m[2],
           m.index,
@@ -444,6 +468,7 @@ function localExtension(context: vscode.ExtensionContext) {
           return null;
         }
         let filteredDefinitions = [];
+        // if we are hovering over the actual function signature itself, find it and return it
         for (let i = 0; i < definitions.length; i++) {
           let definition = definitions[i];
           // magic number 9 here is length of word function plus a space in between the function name
@@ -454,11 +479,13 @@ function localExtension(context: vscode.ExtensionContext) {
             return definition.hover;
           }
         }
+        // determine list of definitions for function calls found in code bodies
         for (let i = 0; i < definitions.length; i++) {
           let definition = definitions[i];
 
           if (global) {
             if (definition.className === "") {
+              // this should only be one occurence, but we can handle multiple
               filteredDefinitions.push(definition);
             }
           } else {
@@ -467,7 +494,16 @@ function localExtension(context: vscode.ExtensionContext) {
               if (usingThis && hoverClass === definition.className) {
                 return definition.hover;
               }
-              filteredDefinitions.push(definition);
+              // if its a function, further filter down by arg list length
+              // otherwise just append if its a class
+              if (fn) {
+                let numArgs = countArgsAt(document, endingOffset);
+                if (numArgs === definition.args.length) {
+                  filteredDefinitions.push(definition);
+                }
+              } else {
+                filteredDefinitions.push(definition);
+              }
             }
           }
         }
@@ -746,6 +782,7 @@ interface HoverData {
   index: number;
   className: string;
   hover: vscode.Hover;
+  args: string[];
 }
 
 function newHoverText(
@@ -819,5 +856,6 @@ function newHoverText(
     index: index,
     className: className,
     hover: new vscode.Hover(lines),
+    args: args,
   };
 }
