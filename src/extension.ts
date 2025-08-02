@@ -306,6 +306,16 @@ function getCommentBoundsList(document: vscode.TextDocument) {
   return commentBounds;
 }
 
+function inCommentBound(index: number, commentBounds: CommentBounds[]) {
+  for (let i = 0; i < commentBounds.length; i++) {
+    let bound = commentBounds[i];
+    if (index >= bound.start && index <= bound.end) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function localExtension(context: vscode.ExtensionContext) {
   const definitions = vscode.languages.registerDefinitionProvider("rascript", {
     provideDefinition(document, position, token) {
@@ -415,6 +425,10 @@ function localExtension(context: vscode.ExtensionContext) {
         }
       }
       while ((m = G_FUNCTION_DEFINITION.exec(text))) {
+        // dont parse if its in a comment
+        if (inCommentBound(m.index, commentBounds)) {
+          continue;
+        }
         let className = detectClass(m.index, classes);
         let pos = document.positionAt(m.index);
         let comment = getCommentText(document, pos);
@@ -710,15 +724,8 @@ function getClassData(text: string, commentBounds: CommentBounds[]) {
   let classes = new Map<string, ClassScope>();
   let m: RegExpExecArray | null;
   while ((m = G_CLASS_DEFINITION.exec(text))) {
-    let inComment = false;
-    for (let i = 0; i < commentBounds.length; i++) {
-      let bound = commentBounds[i];
-      if (m.index >= bound.start && m.index <= bound.end) {
-        inComment = true;
-        break;
-      }
-    }
-    if (inComment) {
+    // dont parse if its in a comment
+    if (inCommentBound(m.index, commentBounds)) {
       continue;
     }
     let postClassNameInd = m.index + m[0].length;
