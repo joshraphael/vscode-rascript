@@ -9,7 +9,7 @@ import { builtinFunctionDefinitions } from "./functionDefinitions";
 
 const G_FUNCTION_DEFINITION =
   /(\bfunction\b)[\t ]*([a-zA-Z][\w]*)[\t ]*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
-const G_CLASS_DEFINITION = /(\bclass\b)[\t ]*(\w+)\s*\{*/g; // keep in sync with syntax file rascript.tmLanguage.json #class-definitions regex
+const G_CLASS_DEFINITION = /(\bclass\b)[\t ]*(\w+)/g; // keep in sync with syntax file rascript.tmLanguage.json #class-definitions regex
 const G_COMMENTS = new RegExp("^//.*$", "g");
 
 const G_BLOCK_COMMENTS_START = /^.*\/\*.*$/g;
@@ -238,6 +238,74 @@ function countArgsAt(document: vscode.TextDocument, offset: number) {
   return count;
 }
 
+function getCommentBoundsList(document: vscode.TextDocument) {
+  let text = document.getText();
+  let commentBounds: CommentBounds[] = [];
+  let inComment = false;
+  let tempStart = 0;
+  for (let i = 0; i < text.length - 1; i++) {
+    if (inComment) {
+      if (text[i] === "\n" || text === "\r") {
+        inComment = false;
+        commentBounds.push({
+          start: tempStart,
+          end: i,
+          type: "Line",
+          raw: text.slice(tempStart, i + 1),
+        });
+      }
+    } else {
+      if (text[i - 1] + text[i] === "//") {
+        inComment = true;
+        tempStart = i - 1;
+      }
+    }
+    if (i === text.length - 1 && inComment) {
+      inComment = false;
+      commentBounds.push({
+        start: tempStart,
+        end: i,
+        type: "Line",
+        raw: text.slice(tempStart, i + 1),
+      });
+    }
+  }
+  // parse different comment types seperately incase they are mixed together,
+  // the bounds between these two could overlap technically
+
+  // get bounds of block comments
+  inComment = false;
+  tempStart = 0;
+  for (let i = 1; i < text.length; i++) {
+    if (inComment) {
+      if (text[i - 1] + text[i] === "*/") {
+        inComment = false;
+        commentBounds.push({
+          start: tempStart,
+          end: i,
+          type: "Block",
+          raw: text.slice(tempStart, i + 1),
+        });
+      }
+    } else {
+      if (text[i - 1] + text[i] === "/*") {
+        inComment = true;
+        tempStart = i - 1;
+      }
+    }
+    if (i === text.length - 1 && inComment) {
+      inComment = false;
+      commentBounds.push({
+        start: tempStart,
+        end: i,
+        type: "Block",
+        raw: text.slice(tempStart, i + 1),
+      });
+    }
+  }
+  return commentBounds;
+}
+
 function localExtension(context: vscode.ExtensionContext) {
   const definitions = vscode.languages.registerDefinitionProvider("rascript", {
     provideDefinition(document, position, token) {
@@ -245,7 +313,8 @@ function localExtension(context: vscode.ExtensionContext) {
       const range = document.getWordRangeAtPosition(position);
       const word = document.getText(range);
       const origWordOffset = document.offsetAt(position);
-      let classes = getClassData(text);
+      let commentBounds = getCommentBoundsList(document);
+      let classes = getClassData(text, commentBounds);
       let m: RegExpExecArray | null;
       let functionDefinitions = new Map<string, ClassFunction[]>();
       while ((m = G_FUNCTION_DEFINITION.exec(text))) {
@@ -324,70 +393,8 @@ function localExtension(context: vscode.ExtensionContext) {
       let text = document.getText();
       let m: RegExpExecArray | null;
       // get bounds of single line comments
-      let commentBounds: CommentBounds[] = []; // currently unused, it may be useful in the future
-      let inComment = false;
-      let tempStart = 0;
-      for (let i = 0; i < text.length - 1; i++) {
-        if (inComment) {
-          if (text[i] === "\n" || text === "\r") {
-            inComment = false;
-            commentBounds.push({
-              start: tempStart,
-              end: i,
-              type: "Line",
-              raw: text.slice(tempStart, i + 1),
-            });
-          }
-        } else {
-          if (text[i - 1] + text[i] === "//") {
-            inComment = true;
-            tempStart = i - 1;
-          }
-        }
-        if (i === text.length - 1 && inComment) {
-          inComment = false;
-          commentBounds.push({
-            start: tempStart,
-            end: i,
-            type: "Line",
-            raw: text.slice(tempStart, i + 1),
-          });
-        }
-      }
-      // parse different comment types seperately incase they are mixed together,
-      // the bounds between these two could overlap technically
-
-      // get bounds of block comments
-      inComment = false;
-      tempStart = 0;
-      for (let i = 1; i < text.length; i++) {
-        if (inComment) {
-          if (text[i - 1] + text[i] === "*/") {
-            inComment = false;
-            commentBounds.push({
-              start: tempStart,
-              end: i,
-              type: "Block",
-              raw: text.slice(tempStart, i + 1),
-            });
-          }
-        } else {
-          if (text[i - 1] + text[i] === "/*") {
-            inComment = true;
-            tempStart = i - 1;
-          }
-        }
-        if (i === text.length - 1 && inComment) {
-          inComment = false;
-          commentBounds.push({
-            start: tempStart,
-            end: i,
-            type: "Block",
-            raw: text.slice(tempStart, i + 1),
-          });
-        }
-      }
-      let classes = getClassData(text);
+      let commentBounds = getCommentBoundsList(document);
+      let classes = getClassData(text, commentBounds);
       for (const [className, classScope] of classes) {
         let pos = document.positionAt(classScope.start);
         let comment = getCommentText(document, pos);
@@ -541,7 +548,8 @@ function localExtension(context: vscode.ExtensionContext) {
           completionFunctions.push(fn.key);
         }
         let text = document.getText();
-        let classes = getClassData(text);
+        let commentBounds = getCommentBoundsList(document);
+        let classes = getClassData(text, commentBounds);
         let m: RegExpExecArray | null;
         while ((m = G_FUNCTION_DEFINITION.exec(text))) {
           completionFunctions.push(m[2]);
@@ -698,11 +706,22 @@ function detectClass(funcPos: number, classData: Map<string, ClassScope>) {
   return "";
 }
 
-function getClassData(text: string) {
+function getClassData(text: string, commentBounds: CommentBounds[]) {
   let classes = new Map<string, ClassScope>();
   let m: RegExpExecArray | null;
   while ((m = G_CLASS_DEFINITION.exec(text))) {
-    let postClassNameInd = m.index + 6 + m[2].length; // class(5) + [space](1) + [Class name](m[2].length)
+    let inComment = false;
+    for (let i = 0; i < commentBounds.length; i++) {
+      let bound = commentBounds[i];
+      if (m.index >= bound.start && m.index <= bound.end) {
+        inComment = true;
+        break;
+      }
+    }
+    if (inComment) {
+      continue;
+    }
+    let postClassNameInd = m.index + m[0].length;
     let ind = postClassNameInd;
     let stack = []; // makeshift stack to detect scope of class
     let strippedText = ""; // this is used to determine the implicit arguments to a class constructor
