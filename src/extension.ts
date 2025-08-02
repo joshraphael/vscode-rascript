@@ -328,6 +328,10 @@ function localExtension(context: vscode.ExtensionContext) {
       let m: RegExpExecArray | null;
       let functionDefinitions = new Map<string, ClassFunction[]>();
       while ((m = G_FUNCTION_DEFINITION.exec(text))) {
+        // dont parse if its in a comment
+        if (inCommentBound(m.index, commentBounds)) {
+          continue;
+        }
         let pos = document.positionAt(m.index);
         let list = functionDefinitions.get(m[2]);
         let a = m[3].split(",").map((s) => s.trim());
