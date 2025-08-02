@@ -566,6 +566,10 @@ function localExtension(context: vscode.ExtensionContext) {
         let classes = getClassData(text, commentBounds);
         let m: RegExpExecArray | null;
         while ((m = G_FUNCTION_DEFINITION.exec(text))) {
+          // dont parse if its in a comment
+          if (inCommentBound(m.index, commentBounds)) {
+            continue;
+          }
           completionFunctions.push(m[2]);
         }
         let functionSet: Set<string> = new Set(completionFunctions);
@@ -573,6 +577,10 @@ function localExtension(context: vscode.ExtensionContext) {
           completionItems.push(newBuiltInFunction(fnName));
         });
         while ((m = G_VARIABLES.exec(text))) {
+          // dont parse if its in a comment
+          if (inCommentBound(m.index, commentBounds)) {
+            continue;
+          }
           completionVariables.push(m[1]);
         }
         let variableSet: Set<string> = new Set(completionVariables);
