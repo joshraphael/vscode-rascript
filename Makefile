@@ -6,6 +6,7 @@ install:
 setup:
 	rm -rf node_modules/
 	rm -rf out/
+	rm -f package-lock.json
 	npm install
 	pnpm compile
 
