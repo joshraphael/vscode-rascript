@@ -2,13 +2,13 @@ import * as vscode from "vscode";
 import * as models from "./models";
 
 export const G_FUNCTION_DEFINITION =
-  /(\bfunction\b)[\t ]*([a-zA-Z][\w]*)[\t ]*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
-export const G_CLASS_DEFINITION = /(\bclass\b)[\t ]*(\w+)/g; // keep in sync with syntax file rascript.tmLanguage.json #class-definitions regex
+  /(\bfunction\b)[\t ]*([a-zA-Z_][\w]*)[\t ]*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
+export const G_CLASS_DEFINITION = /(\bclass\b)[\t ]*([a-zA-Z_][\w]*)/g; // keep in sync with syntax file rascript.tmLanguage.json #class-definitions regex
 export const G_COMMENTS = new RegExp("^//.*$", "g");
 
 export const G_BLOCK_COMMENTS_START = /^.*\/\*.*$/g;
 export const G_BLOCK_COMMENTS_END = /^.*\*\/$/g;
-export const G_VARIABLES = /(\w+)\s*=/g;
+export const G_VARIABLES = /([a-zA-Z_][\w]*)[\t ]*=/g;
 export const G_STAR_BLOCK_COMMENT = /^\*.*/g; // starts with a star
 export const G_FUNTION = "function";
 export const G_CLASS = "class";

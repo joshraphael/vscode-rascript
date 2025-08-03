@@ -102,22 +102,16 @@
         "class-definitions": {
             "patterns": [
                 {
-                    "match": "(\\bclass\\b)[\\t ]*(\\w+)",
+                    "match": "(\\bclass\\b)[\\t ]*(([a-zA-Z_][\\w]*)|(.+))",
                     "captures": {
                         "1": {
                             "name": "keyword.class.rascript"
                         },
-                        "2": {
-                            "patterns": [
-                                {
-                                    "match": "[0-9][a-zA-Z0-9]*",
-                                    "name": "invalid.illegal.identifier.rascript"
-                                },
-                                {
-                                   "match": "\\w+",
-                                   "name": "entity.name.class.rascript"
-                                }
-                            ]
+                        "3": {
+                            "name": "entity.name.class.rascript"
+                        },
+                        "4": {
+                            "name": "invalid.illegal.identifier.rascript"
                         }
                     }
                 }
@@ -126,7 +120,7 @@
         "function-definitions": {
             "patterns": [
                 {
-                    "match": "(\\bfunction\\b)[\\t ]*(([a-zA-Z][\\w]*)|(.+))[\\t ]*\\(([^\\(\\)]*)\\)",
+                    "match": "(\\bfunction\\b)[\\t ]*(([a-zA-Z_][\\w]*)|(.+))[\\t ]*\\(([^\\(\\)]*)\\)",
                     "captures": {
                         "1": {
                             "name": "keyword.function.rascript"
@@ -148,7 +142,7 @@
                                     "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
-                                    "match": "(?:[a-zA-Z][\\w]*)",
+                                    "match": "(?:[a-zA-Z_][\\w]*)",
                                     "name": "variable.parameter.rascript"
                                 },
                                 {
@@ -210,12 +204,12 @@
             "patterns": [
                 {
                     "comment": "left hand side of variable assignment",
-                    "match": "(\\w+)\\s*=",
+                    "match": "([a-zA-Z_][\\w]*)[\\t ]*=",
                     "captures": {
                         "1": {
                             "patterns": [
                                 {
-                                    "match": "(?:\\w+)",
+                                    "match": "(?:[a-zA-Z_][\\w]*)",
                                     "name": "variable.other.assignment.rascript"
                                 }
                             ]
@@ -228,12 +222,12 @@
             "patterns": [
                 {
                     "comment": "different variables around the file being used, not assignment",
-                    "match": "(\\w+)",
+                    "match": "([a-zA-Z_][\\w]*)",
                     "captures": {
                         "1": {
                             "patterns": [
                                 {
-                                    "match": "(?:\\w+)",
+                                    "match": "(?:[a-zA-Z_][\\w]*)",
                                     "name": "variable.other.rascript"
                                 }
                             ]
