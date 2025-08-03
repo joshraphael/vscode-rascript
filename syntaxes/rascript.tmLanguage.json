@@ -22,6 +22,9 @@
                     "include": "#numbers"
                 },
                 {
+                    "include": "#class-definitions"
+                },
+                {
                     "include": "#function-definitions"
                 },
                 {
@@ -32,6 +35,9 @@
                 },
                 {
                     "include": "#comments"
+                },
+                {
+                    "include": "#variable-language-this"
                 },
                 {
                     "include": "#variable-assignment"
@@ -93,51 +99,61 @@
                 }
             ]
         },
-        "function-definitions": {
+        "class-definitions": {
             "patterns": [
                 {
-                    "match": "(\\bfunction\\b)\\s*(\\w+)\\s*\\(([^\\(\\)]*)\\)",
+                    "match": "(\\bclass\\b)[\\t ]*(\\w+)",
                     "captures": {
                         "1": {
-                            "name": "keyword.function.rascript"
+                            "name": "keyword.class.rascript"
                         },
                         "2": {
                             "patterns": [
-                                {
-                                    "match": ".+[\\s]+.+",
-                                    "name": "invalid.illegal.identifier.rascript"
-                                },
-                                {
-                                    "match": "(?:.*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\,\\.\\<\\>\\/\\?]+.*)",
-                                    "name": "invalid.illegal.identifier.rascript"
-                                },
                                 {
                                     "match": "[0-9][a-zA-Z0-9]*",
                                     "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
                                    "match": "\\w+",
-                                   "name": "entity.name.function.rascript"
+                                   "name": "entity.name.class.rascript"
                                 }
                             ]
+                        }
+                    }
+                }
+            ]
+        },
+        "function-definitions": {
+            "patterns": [
+                {
+                    "match": "(\\bfunction\\b)[\\t ]*(([a-zA-Z][\\w]*)|(.+))[\\t ]*\\(([^\\(\\)]*)\\)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.function.rascript"
                         },
                         "3": {
+                            "name": "entity.name.function.rascript"
+                        },
+                        "4": {
+                            "name": "invalid.illegal.identifier.rascript"
+                        },
+                        "5": {
                             "patterns": [
                                 {
-                                    "match": "(?:[a-zA-Z0-9]+[\\s]+[a-zA-Z0-9]+)",
+                                    "match": "(?:[\\w]+\\s+[\\w]+)",
                                     "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
-                                    "match": "(?:[a-zA-Z0-9]*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\.\\<\\>\\/\\?]+[a-zA-Z0-9]*)",
+                                    "match": "(?:[^\\s\\,]*[\\%\\!\\@\\#\\$\\%\\^\\&\\*\\-\\=\\+\\[\\]\\{\\}\\;\\:\\'\"\\.\\<\\>\\/\\?]+[^\\s\\,]*)",
                                     "name": "invalid.illegal.identifier.rascript"
                                 },
                                 {
-                                    "match": "(?:[0-9][a-zA-Z0-9]*)",
-                                    "name": "invalid.illegal.identifier.rascript"
-                                },
-                                {
-                                    "match": "(?:[a-zA-Z][a-zA-Z0-9]*)",
+                                    "match": "(?:[a-zA-Z][\\w]*)",
                                     "name": "variable.parameter.rascript"
+                                },
+                                {
+                                    "match": "(?:\\w+)",
+                                    "name": "invalid.illegal.identifier.rascript"
                                 }
                             ]
                         }
@@ -179,6 +195,14 @@
                             ]
                         }
                     }
+                }
+            ]
+        },
+        "variable-language-this": {
+            "patterns": [
+                {
+                    "name": "variable.language.this.rascript",
+                    "match": "\\b(this)\\b"
                 }
             ]
         },

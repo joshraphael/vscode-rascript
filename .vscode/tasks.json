@@ -4,8 +4,9 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "npm",
-			"script": "watch",
+			"label": "rebuild package",
+            "type": "shell",
+            "command": "npm run compile",
 			"problemMatcher": "$tsc-watch",
 			"isBackground": true,
 			"presentation": {

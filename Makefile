@@ -6,11 +6,16 @@ install:
 setup:
 	rm -rf node_modules/
 	rm -rf out/
+	rm -f package-lock.json
 	npm install
 	pnpm compile
 
-check:
+check: style
 	npm run pretest
+
+style:
+	npm run format
+	npm run lint
 
 tag-patch: check
 	bash scripts/update.sh --patch
