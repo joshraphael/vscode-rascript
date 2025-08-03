@@ -12,3 +12,9 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npm run pretest
+      - name: Test Publish Extension
+        uses: HaaLeo/publish-vscode-extension@v1
+        id: publishToOpenVSX
+        with:
+          pat: secret_key
+          dryRun: true
