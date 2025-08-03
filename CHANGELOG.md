@@ -11,11 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Syntax highlighting for `class` and `this` keywords
 - Auto complete for all class names and functions
-- Hover documentation on classes and class functions
+- Hover documentation on classes, constructors and class functions
 - Function definition jumping to class members
 
 ### Changed
+
+- Fixed code jumping, hover text, and code completion to ignore any functions or classes defined in a comment
+- Duplicate function and variable names being show in auto completion
+- Improved illegal name detection on functions and parameters
 
 ### Removed
 
