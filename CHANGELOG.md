@@ -5,7 +5,7 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [[0.3.0](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.3.0)] - 2025-XX-XX
+## [[0.3.0](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.3.0)] - 2025-08-03
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.2.4...v0.3.0)
 
@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed code jumping, hover text, and code completion to ignore any functions or classes defined in a comment
 - Duplicate function and variable names being show in auto completion
 - Improved illegal name detection on functions and parameters
+- Bump dependencies to fix multiple vulnerabilities [#3](https://github.com/joshraphael/vscode-rascript/security/dependabot/3), [#4](https://github.com/joshraphael/vscode-rascript/security/dependabot/4), [#5](https://github.com/joshraphael/vscode-rascript/security/dependabot/5), [#7](https://github.com/joshraphael/vscode-rascript/security/dependabot/7), [#10](https://github.com/joshraphael/vscode-rascript/security/dependabot/10)
 
 ### Removed
 
