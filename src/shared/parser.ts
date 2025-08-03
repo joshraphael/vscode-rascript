@@ -498,5 +498,6 @@ export function newHoverText(
     className: className,
     hover: new vscode.Hover(lines),
     args: args,
+    lines: lines
   };
 }

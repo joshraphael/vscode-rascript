@@ -1,6 +1,4 @@
 import * as vscode from "vscode";
-import * as parser from "./parser";
-import { builtinFunctionDefinitions } from "./functionDefinitions";
 import { definitionProvider } from "./definitionProvider";
 import { hoverProvider } from "./hoverProvider";
 import { completionItemsProvider } from "./completionItemsProvider";
@@ -21,6 +19,7 @@ export function localExtension(context: vscode.ExtensionContext) {
       return hoverProvider(document, position);
     },
   });
+
   const autocomplete = vscode.languages.registerCompletionItemProvider(
     "rascript",
     {

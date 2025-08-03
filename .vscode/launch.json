@@ -13,7 +13,7 @@
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [
-				"${workspaceFolder}/out/extension/**/*.js"
+				"${workspaceFolder}/out/node/**/*.js"
 			],
 			"preLaunchTask": "${defaultBuildTask}"
 		}

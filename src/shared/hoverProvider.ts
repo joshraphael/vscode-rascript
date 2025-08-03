@@ -162,13 +162,11 @@ export function hoverProvider(
     if (filteredDefinitions.length === 1) {
       return filteredDefinitions[0].hover;
     } else {
-      // Special case: two functions in different classes are named the same and we cant determine the exact hover data
-      let lines = [];
+      // Special case: more than one functions in different classes are named the same and we cant determine the exact hover data
+      let lines: string[] = [];
       for (let i = 0; i < filteredDefinitions.length; i++) {
         let definition = filteredDefinitions[i];
-        lines.push(
-          `${definition.className}.${definition.key} @ ${definition.index}`
-        );
+        lines = lines.concat(definition.lines);
       }
       return new vscode.Hover(lines);
     }
