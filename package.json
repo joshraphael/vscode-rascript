@@ -16,8 +16,8 @@
     "Programming Languages"
   ],
   "activationEvents": [],
-  "main": "./out/node/extension.js",
-  "browser": "./out/web/extension.js",
+  "main": "./out/main/extension.js",
+  "browser": "./out/browser/extension.js",
   "contributes": {
     "configuration": {
       "title": "RAScript Language Server",
@@ -52,8 +52,8 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./src/shared && tsc -p ./src/node && webpack",
-    "watch": "tsc -watch -p ./src/node",
+    "compile": "tsc -p ./src/clients/shared && tsc -p ./src/clients/main && webpack",
+    "watch": "tsc -watch -p ./src/clients/main",
     "pretest": "npm run compile && npm run lint:check && npm run format:check",
     "lint": "eslint --ext .js,.ts,.tsx src --max-warnings=0 --fix",
     "format": "prettier --write 'src/**/*.{json,md,js,ts,tsx}'",

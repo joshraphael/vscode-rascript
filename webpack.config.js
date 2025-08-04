@@ -15,10 +15,10 @@ const config = {
   },
   target: 'webworker', // vscode extensions run in webworker context for VS Code web 📖 -> https://webpack.js.org/configuration/target/#target
 
-  entry: './src/web/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+  entry: './src/clients/browser/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   output: {
     // the bundle is stored in the 'out/web' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
-    path: path.resolve(__dirname, 'out', 'web'),
+    path: path.resolve(__dirname, 'out', 'browser'),
     filename: 'extension.js',
     libraryTarget: 'commonjs2',
     devtoolModuleFilenameTemplate: '../[resource-path]'
@@ -49,7 +49,7 @@ const config = {
           {
             loader: 'ts-loader',
             options: {
-              configFile: 'src/web/tsconfig.json',
+              configFile: 'src/clients/browser/tsconfig.json',
             },
           }
         ]
