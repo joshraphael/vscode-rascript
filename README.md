@@ -17,7 +17,7 @@ Available on the [Visual Studio Marketplace](https://marketplace.visualstudio.co
 - Make
 
 ## Quickstart
-to start install all dependencies using `npm install`. Once installed the extension should be available to run in VSCode by pressing F5 to launch a new window running the code.
+To start, install all dependencies using `npm install`. Once installed the extension should be available to run in VSCode by pressing F5 to launch a new window running the extension.
 
 ## Feature Highlights
 - Syntax Highlighting - Custom RAScript syntax highlighting using TextMate.
@@ -37,3 +37,12 @@ Windows:
 ```text
 C:\Users\joshraphael\rascript-language-server_v0.0.1_win-x64.exe
 ```
+
+## Make commands
+
+|Title|Command|Parameters|Description|
+|-|-|-|-|
+|Setup|`make setup`|None|Clean env and download dependencies|
+|Check Exetension|`make check`|None|Check the extensions for lint and format errors|
+|Apply Style|`make style`|None|Apply linting and formatting to extension code|
+|Run In Browser|`make browser`|None|Run the extension in the browser version of VSCode|

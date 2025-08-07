@@ -5,7 +5,7 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [[0.3.1](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.3.1)] - 2025-08-XX
+## [[0.3.1](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.3.1)] - 2025-08-07
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.3.0...v0.3.1)
 
@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Allow function names, parameters class names, and variables to start with an underscore
+- Fix extension package distribution pipeline
 
 ### Removed
 
