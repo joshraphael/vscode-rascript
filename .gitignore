@@ -1,6 +1,7 @@
 bin/
 out/
 dist/
+syntaxes/
 node_modules/
 .vscode-test/
 .vscode-test-web/
