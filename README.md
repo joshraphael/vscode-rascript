@@ -43,6 +43,7 @@ C:\Users\joshraphael\rascript-language-server_v0.0.1_win-x64.exe
 |Title|Command|Parameters|Description|
 |-|-|-|-|
 |Setup|`make setup`|None|Clean env and download dependencies|
+|Syntax|`make syntax`|None|Download the syntax file|
 |Check Exetension|`make check`|None|Check the extensions for lint and format errors|
 |Apply Style|`make style`|None|Apply linting and formatting to extension code|
 |Run In Browser|`make browser`|None|Run the extension in the browser version of VSCode|

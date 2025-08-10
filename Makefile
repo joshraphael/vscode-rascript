@@ -1,9 +1,14 @@
-setup:
+setup: syntax
 	rm -rf node_modules/
 	rm -rf out/
 	rm -f package-lock.json
 	npm install
 	pnpm compile
+
+syntax:
+	rm -rf syntaxes
+	mkdir -p syntaxes
+	wget -O syntaxes/rascript.tmLanguage.json 'https://github.com/joshraphael/rascript-syntax/releases/download/v0.0.3/rascript.tmLanguage.json'
 
 check: style
 	npm run pretest

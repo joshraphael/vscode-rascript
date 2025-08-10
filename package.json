@@ -52,7 +52,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./src/clients/shared && tsc -p ./src/clients/main && webpack",
+    "compile": "make syntax && tsc -p ./src/clients/shared && tsc -p ./src/clients/main && webpack",
     "watch": "tsc -watch -p ./src/clients/main",
     "pretest": "npm run compile && npm run lint:check && npm run format:check",
     "lint": "eslint --ext .js,.ts,.tsx src --max-warnings=0 --fix",
