@@ -133,7 +133,6 @@ export function getScope(
 }
 
 export function getCommentBoundsList(document: vscode.TextDocument) {
-  console.log("test");
   let text = document.getText();
   let commentBounds: models.CommentBounds[] = [];
   let inComment = false;
