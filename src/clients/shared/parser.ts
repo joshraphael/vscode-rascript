@@ -137,15 +137,18 @@ export function getCommentBoundsList(document: vscode.TextDocument) {
   let commentBounds: models.CommentBounds[] = [];
   let inComment = false;
   let tempStart = 0;
-  for (let i = 0; i < text.length - 1; i++) {
+  if (text.length < 2) {
+    return commentBounds;
+  }
+  for (let i = 1; i < text.length; i++) {
     if (inComment) {
-      if (text[i] === "\n" || text === "\r") {
+      if (text[i] === "\n" || text[i] === "\r") {
         inComment = false;
         commentBounds.push({
           start: tempStart,
-          end: i,
+          end: i - 1,
           type: "Line",
-          raw: text.slice(tempStart, i + 1),
+          raw: text.slice(tempStart, i),
         });
       }
     } else {
@@ -160,7 +163,7 @@ export function getCommentBoundsList(document: vscode.TextDocument) {
         start: tempStart,
         end: i,
         type: "Line",
-        raw: text.slice(tempStart, i + 1),
+        raw: text.slice(tempStart),
       });
     }
   }
@@ -173,16 +176,18 @@ export function getCommentBoundsList(document: vscode.TextDocument) {
   for (let i = 1; i < text.length; i++) {
     if (inComment) {
       if (text[i - 1] + text[i] === "*/") {
+        // end
         inComment = false;
         commentBounds.push({
           start: tempStart,
-          end: i,
+          end: i - 1,
           type: "Block",
-          raw: text.slice(tempStart, i + 1),
+          raw: text.slice(tempStart, i),
         });
       }
     } else {
       if (text[i - 1] + text[i] === "/*") {
+        // start
         inComment = true;
         tempStart = i - 1;
       }
@@ -193,7 +198,7 @@ export function getCommentBoundsList(document: vscode.TextDocument) {
         start: tempStart,
         end: i,
         type: "Block",
-        raw: text.slice(tempStart, i + 1),
+        raw: text.slice(tempStart),
       });
     }
   }
