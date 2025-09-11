@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import * as parser from "./parser";
-import { builtinFunctionDefinitions } from "./functionDefinitions";
 
 export function completionItemsProvider(
   document: vscode.TextDocument,
