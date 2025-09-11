@@ -516,9 +516,14 @@ export function parseDocument(
   let classes = getClassData(text, commentBounds);
   let functionDefinitions = new Map<string, models.ClassFunction[]>();
   let words = new Map<string, models.HoverData[]>(); // should be renamed to hoverData or something
+  let completionFunctions: string[] = [];
+  let completionVariables: string[] = [];
+  let completionClasses: string[] = [];
   // Parse each build in function in the document
   for (let i = 0; i < builtinFunctionDefinitions.length; i++) {
     let fn = builtinFunctionDefinitions[i];
+
+    // Add hover data
     let comment = fn.commentDoc.join("\n");
     let hover = newHoverText(
       fn.key,
@@ -535,10 +540,14 @@ export function parseDocument(
     } else {
       words.set(fn.key, [hover]);
     }
+
+    // Add completion data
+    completionFunctions.push(fn.key);
   }
 
   // Parse each class in the document
   for (const [className, classScope] of classes) {
+    // add hover info
     let pos = document.positionAt(classScope.start);
     let comment = getCommentText(document, pos);
     let hover = newHoverText(
@@ -556,6 +565,9 @@ export function parseDocument(
     } else {
       words.set(className, [hover]);
     }
+
+    // add completion info
+    completionClasses.push(className);
   }
 
   // Parse each function in the document
@@ -598,10 +610,27 @@ export function parseDocument(
     } else {
       words.set(m[2], [hover]);
     }
+
+    // add completion info
+    completionFunctions.push(m[2]);
+  }
+
+  // Parse each variable in the document
+  while ((m = G_VARIABLES.exec(text))) {
+    // dont parse if its in a comment
+    if (inCommentBound(m.index, commentBounds)) {
+      continue;
+    }
+
+    // add completion info
+    completionVariables.push(m[1]);
   }
   return {
     classes: classes,
     functionDefinitions: functionDefinitions,
     hoverData: words,
+    completionFunctions: completionFunctions,
+    completionVariables: completionVariables,
+    completionClasses: completionClasses,
   };
 }

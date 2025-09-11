@@ -40,4 +40,7 @@ export interface ParsedDocument {
   classes: Map<string, ClassScope>;
   functionDefinitions: Map<string, ClassFunction[]>;
   hoverData: Map<string, HoverData[]>;
+  completionFunctions: string[];
+  completionVariables: string[];
+  completionClasses: string[];
 }

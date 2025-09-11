@@ -1,7 +1,5 @@
 import * as vscode from "vscode";
 import * as parser from "./parser";
-import * as models from "./models";
-import { builtinFunctionDefinitions } from "./functionDefinitions";
 
 export function hoverProvider(
   document: vscode.TextDocument,
