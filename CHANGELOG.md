@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Syntax highlighting to use upstream [rascript-syntax](https://github.com/joshraphael/rascript-syntax) repo
 - Bug involving incorrect comment bounds detected for hover, definition and completion data
+- Unify document parser to align with language server
 
 ### Removed
 
