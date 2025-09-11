@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as models from "./models";
+import { builtinFunctionDefinitions } from "./functionDefinitions";
 
 export const G_FUNCTION_DEFINITION =
   /(\bfunction\b)[\t ]*([a-zA-Z_][\w]*)[\t ]*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
@@ -514,32 +515,93 @@ export function parseDocument(
   let commentBounds = getCommentBoundsList(document);
   let classes = getClassData(text, commentBounds);
   let functionDefinitions = new Map<string, models.ClassFunction[]>();
+  let words = new Map<string, models.HoverData[]>(); // should be renamed to hoverData or something
+  // Parse each build in function in the document
+  for (let i = 0; i < builtinFunctionDefinitions.length; i++) {
+    let fn = builtinFunctionDefinitions[i];
+    let comment = fn.commentDoc.join("\n");
+    let hover = newHoverText(
+      fn.key,
+      -1,
+      G_FUNTION,
+      "",
+      comment,
+      fn.url,
+      ...fn.args
+    );
+    let definitions = words.get(fn.key);
+    if (definitions !== undefined) {
+      definitions.push(hover);
+    } else {
+      words.set(fn.key, [hover]);
+    }
+  }
+
+  // Parse each class in the document
+  for (const [className, classScope] of classes) {
+    let pos = document.positionAt(classScope.start);
+    let comment = getCommentText(document, pos);
+    let hover = newHoverText(
+      className,
+      classScope.start,
+      G_CLASS,
+      "",
+      comment,
+      "",
+      ...classScope.constructorArgs
+    );
+    let definitions = words.get(className);
+    if (definitions !== undefined) {
+      definitions.push(hover);
+    } else {
+      words.set(className, [hover]);
+    }
+  }
+
+  // Parse each function in the document
   let m: RegExpExecArray | null;
   while ((m = G_FUNCTION_DEFINITION.exec(text))) {
     // dont parse if its in a comment
     if (inCommentBound(m.index, commentBounds)) {
       continue;
     }
+    let className = detectClass(m.index, classes);
     let pos = document.positionAt(m.index);
+    let comment = getCommentText(document, pos);
     let list = functionDefinitions.get(m[2]);
     let a = m[3].split(",").map((s) => s.trim());
     var args = a.filter(function (el) {
       return el !== null && el !== "" && el !== undefined;
     });
-    let item = createClassFunction(
-      detectClass(m.index, classes),
-      m[2],
-      pos,
-      ...args
-    );
+
+    // add definition info
+    let item = createClassFunction(className, m[2], pos, ...args);
     if (list !== undefined) {
       list.push(item);
     } else {
       functionDefinitions.set(m[2], [item]);
     }
+
+    // add hover info
+    let hover = newHoverText(
+      m[2],
+      m.index,
+      G_FUNTION,
+      className,
+      comment,
+      "",
+      ...args
+    );
+    let definitions = words.get(m[2]);
+    if (definitions !== undefined) {
+      definitions.push(hover);
+    } else {
+      words.set(m[2], [hover]);
+    }
   }
   return {
     classes: classes,
     functionDefinitions: functionDefinitions,
+    hoverData: words,
   };
 }

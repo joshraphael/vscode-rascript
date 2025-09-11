@@ -7,78 +7,7 @@ export function hoverProvider(
   document: vscode.TextDocument,
   position: vscode.Position
 ) {
-  let words = new Map<string, models.HoverData[]>();
-  for (let i = 0; i < builtinFunctionDefinitions.length; i++) {
-    let fn = builtinFunctionDefinitions[i];
-    let comment = fn.commentDoc.join("\n");
-    let hover = parser.newHoverText(
-      fn.key,
-      -1,
-      parser.G_FUNTION,
-      "",
-      comment,
-      fn.url,
-      ...fn.args
-    );
-    let definitions = words.get(fn.key);
-    if (definitions !== undefined) {
-      definitions.push(hover);
-    } else {
-      words.set(fn.key, [hover]);
-    }
-  }
-  let text = document.getText();
-  let m: RegExpExecArray | null;
-  // get bounds of single line comments
-  let commentBounds = parser.getCommentBoundsList(document);
-  let classes = parser.getClassData(text, commentBounds);
-  for (const [className, classScope] of classes) {
-    let pos = document.positionAt(classScope.start);
-    let comment = parser.getCommentText(document, pos);
-    let hover = parser.newHoverText(
-      className,
-      classScope.start,
-      parser.G_CLASS,
-      "",
-      comment,
-      "",
-      ...classScope.constructorArgs
-    );
-    let definitions = words.get(className);
-    if (definitions !== undefined) {
-      definitions.push(hover);
-    } else {
-      words.set(className, [hover]);
-    }
-  }
-  while ((m = parser.G_FUNCTION_DEFINITION.exec(text))) {
-    // dont parse if its in a comment
-    if (parser.inCommentBound(m.index, commentBounds)) {
-      continue;
-    }
-    let className = parser.detectClass(m.index, classes);
-    let pos = document.positionAt(m.index);
-    let comment = parser.getCommentText(document, pos);
-    let a = m[3].split(",").map((s) => s.trim());
-    var args = a.filter(function (el) {
-      return el !== null && el !== "" && el !== undefined;
-    });
-    let hover = parser.newHoverText(
-      m[2],
-      m.index,
-      parser.G_FUNTION,
-      className,
-      comment,
-      "",
-      ...args
-    );
-    let definitions = words.get(m[2]);
-    if (definitions !== undefined) {
-      definitions.push(hover);
-    } else {
-      words.set(m[2], [hover]);
-    }
-  }
+  let parsedDocument = parser.parseDocument(document);
   const range = document.getWordRangeAtPosition(position);
   let startingPos = position;
   if (range?.start !== undefined) {
@@ -91,12 +20,12 @@ export function hoverProvider(
   const startingOffset = document.offsetAt(startingPos);
   const endingOffset = document.offsetAt(endingPos);
   const word = document.getText(range);
-  const hoverClass = parser.detectClass(startingOffset, classes);
+  const hoverClass = parser.detectClass(startingOffset, parsedDocument.classes);
   let offset = startingOffset - 1; // get character just before the function name position
 
   // Special case: this keyword should show the class hover info
   if (word === "this") {
-    let definitions = words.get(hoverClass);
+    let definitions = parsedDocument.hoverData.get(hoverClass);
     if (definitions !== undefined) {
       for (let i = 0; i < definitions.length; i++) {
         let definition = definitions[i];
@@ -108,7 +37,7 @@ export function hoverProvider(
   }
   const [global, usingThis] = parser.getScope(document, startingOffset);
 
-  let definitions = words.get(word);
+  let definitions = parsedDocument.hoverData.get(word);
   if (definitions !== undefined) {
     const [fn, cls] = parser.getWordType(
       document,

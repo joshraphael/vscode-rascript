@@ -39,4 +39,5 @@ export interface HoverData {
 export interface ParsedDocument {
   classes: Map<string, ClassScope>;
   functionDefinitions: Map<string, ClassFunction[]>;
+  hoverData: Map<string, HoverData[]>;
 }
