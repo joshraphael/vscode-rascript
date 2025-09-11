@@ -348,7 +348,7 @@ export function detectClass(
 export function getClassData(
   text: string,
   commentBounds: models.CommentBounds[]
-) {
+): Map<string, models.ClassScope> {
   let classes = new Map<string, models.ClassScope>();
   let m: RegExpExecArray | null;
   while ((m = G_CLASS_DEFINITION.exec(text))) {
@@ -504,5 +504,42 @@ export function newHoverText(
     hover: new vscode.Hover(lines),
     args: args,
     lines: lines,
+  };
+}
+
+export function parseDocument(
+  document: vscode.TextDocument
+): models.ParsedDocument {
+  let text = document.getText();
+  let commentBounds = getCommentBoundsList(document);
+  let classes = getClassData(text, commentBounds);
+  let functionDefinitions = new Map<string, models.ClassFunction[]>();
+  let m: RegExpExecArray | null;
+  while ((m = G_FUNCTION_DEFINITION.exec(text))) {
+    // dont parse if its in a comment
+    if (inCommentBound(m.index, commentBounds)) {
+      continue;
+    }
+    let pos = document.positionAt(m.index);
+    let list = functionDefinitions.get(m[2]);
+    let a = m[3].split(",").map((s) => s.trim());
+    var args = a.filter(function (el) {
+      return el !== null && el !== "" && el !== undefined;
+    });
+    let item = createClassFunction(
+      detectClass(m.index, classes),
+      m[2],
+      pos,
+      ...args
+    );
+    if (list !== undefined) {
+      list.push(item);
+    } else {
+      functionDefinitions.set(m[2], [item]);
+    }
+  }
+  return {
+    classes: classes,
+    functionDefinitions: functionDefinitions,
   };
 }
