@@ -472,6 +472,7 @@ export function parseCommentText(comment: string): string[] {
   if (codeBlock) {
     lines.push("```");
   }
+  // console.log(lines);
   return lines;
 }
 
@@ -493,7 +494,7 @@ export function newHoverText(
     }
     lines.push(`\`\`\`rascript\n${prefix}${key}(${argStr})\n\`\`\``);
     let comments = parseCommentText(text);
-    lines.concat(comments);
+    lines = lines.concat(comments);
     if (linkKey !== "") {
       lines.push("---");
       lines.push(`[Wiki link for \`${key}()\`](${linkKey})`);
@@ -517,7 +518,7 @@ export function newHoverText(
     }
     lines.push(`\`\`\`rascript\n${prefix}${key}(${argStr})\n\`\`\``);
     let comments = parseCommentText(text);
-    lines.concat(comments);
+    lines = lines.concat(comments);
     return {
       key: key,
       index: index,
