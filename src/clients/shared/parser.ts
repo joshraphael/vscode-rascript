@@ -472,7 +472,6 @@ export function parseCommentText(comment: string): string[] {
   if (codeBlock) {
     lines.push("```");
   }
-  // console.log(lines);
   return lines;
 }
 
