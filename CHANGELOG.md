@@ -11,10 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New built-in function definition `achievement_set()`
+
 ### Changed
 
 - Syntax highlighting to use upstream [rascript-syntax](https://github.com/joshraphael/rascript-syntax) repo
 - Unify document parser to align with language server
+- `achievement()` built-in function definition to support new `set` parameter
+- `leaderboard()` built-in function definition to support new `set` parameter
 
 ### Removed
 
