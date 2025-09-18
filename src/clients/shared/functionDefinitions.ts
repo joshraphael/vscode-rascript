@@ -822,6 +822,7 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
       "format",
       "lower_is_better",
       "id",
+      "set"
     ],
     commentDoc: [
       "// Defines a leaderboard. `title` and `description` must be strings.",
@@ -847,6 +848,8 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
       "// if `lower_is_better` is `true`, lower scores will be ranked higher in the leaderboard.",
       "// ",
       "// if `id` is provided when calling the `leaderboard` function, the script will generate a local leaderboard definition that the toolkit will merge into the existing leaderboard instead of putting as a separate local leaderboard.",
+      "// ",
+      "// `set` specifies the unique identifier of the [achievement set](https://github.com/Jamiras/RATools/wiki/Achievement-Functions#achievement_settitle-typebonus-id0-game_id0) the achievement should be partitioned into.",
     ],
   },
   {
