@@ -615,6 +615,7 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
       "modified",
       "badge",
       "type",
+      "set"
     ],
     commentDoc: [
       "// Defines a new achievement with the specified `title` (string), `description` (string), `points` (integer), and `trigger`.",
@@ -639,6 +640,8 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
       '// | `"missable"` | Missable |',
       '// | `"progression"` | Progression |',
       '// | `"win_condition"` | Win condition |',
+      "// ",
+      "// `set` specifies the unique identifier of the [achievement set](https://github.com/Jamiras/RATools/wiki/Achievement-Functions#achievement_settitle-typebonus-id0-game_id0) the achievement should be partitioned into.",
       "// ",
       "// #### Example",
       "// ",
