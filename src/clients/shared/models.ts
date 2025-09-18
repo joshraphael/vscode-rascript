@@ -30,6 +30,7 @@ export interface ClassFunction {
 export interface HoverData {
   key: string;
   index: number;
+  type: string;
   className: string;
   hover: vscode.Hover;
   args: string[];

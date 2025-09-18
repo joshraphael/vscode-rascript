@@ -432,80 +432,103 @@ export function newCompletion(name: string, kind: vscode.CompletionItemKind) {
   return snippetCompletion;
 }
 
+export function parseCommentText(comment: string): string[] {
+  let lines: string[] = [];
+  let commentLines = comment.split(/\r?\n/);
+  lines.push("---");
+  let curr = "";
+  let codeBlock = false;
+  for (let i = 0; i < commentLines.length; i++) {
+    let line = commentLines[i].replace(/^\/\//g, "");
+    line = line.trimStart();
+    if (line.startsWith("```")) {
+      codeBlock = !codeBlock;
+      if (codeBlock) {
+        curr = line;
+      } else {
+        curr = curr + "\n" + line;
+        lines.push(curr);
+        curr = "";
+      }
+      continue;
+    }
+    if (line.startsWith("|") || line.startsWith("*")) {
+      line = line + "\n";
+    }
+    if (codeBlock) {
+      curr = curr + "\n" + line;
+    } else {
+      if (line === "") {
+        lines.push(curr);
+        curr = "";
+      } else {
+        curr = curr + " " + line;
+      }
+    }
+  }
+  if (curr !== "") {
+    lines.push(curr);
+  }
+  if (codeBlock) {
+    lines.push("```");
+  }
+  return lines;
+}
+
 export function newHoverText(
   key: string,
   index: number,
   type: string,
   className: string,
   text: string,
-  docUrl: string,
+  linkKey: string,
   ...args: string[]
-): models.HoverData {
-  let argStr = args.join(", ");
-  let commentLines = text.split(/\r?\n/);
+): models.HoverData | null {
   let lines = [];
-  let prefix = "function ";
-  if (className !== "") {
-    prefix = `// class ${className}\nfunction `;
+  if (type === G_FUNTION) {
+    let argStr = args.join(", ");
+    let prefix = "function ";
+    if (className !== "") {
+      prefix = `// class ${className}\nfunction `;
+    }
+    lines.push(`\`\`\`rascript\n${prefix}${key}(${argStr})\n\`\`\``);
+    let comments = parseCommentText(text);
+    lines = lines.concat(comments);
+    if (linkKey !== "") {
+      lines.push("---");
+      lines.push(`[Wiki link for \`${key}()\`](${linkKey})`);
+    }
+    return {
+      key: key,
+      index: index,
+      type: type,
+      className: className,
+      hover: new vscode.Hover(lines),
+      args: args,
+      lines: lines,
+    };
   }
-  lines.push(`\`\`\`rascript\n${prefix}${key}(${argStr})\n\`\`\``);
   if (type === G_CLASS) {
-    let fnLine = lines[0];
-    lines = [`\`\`\`rascript\nclass ${key}\n\`\`\``];
-    lines.push(fnLine);
-  }
-  if (text !== "") {
-    lines.push("---");
-    let curr = "";
-    let codeBlock = false;
-    for (let i = 0; i < commentLines.length; i++) {
-      let line = commentLines[i].replace(/^\/\//g, "");
-      line = line.trimStart();
-      if (line.startsWith("```")) {
-        codeBlock = !codeBlock;
-        if (codeBlock) {
-          curr = line;
-        } else {
-          curr = curr + "\n" + line;
-          lines.push(curr);
-          curr = "";
-        }
-        continue;
-      }
-      if (line.startsWith("|") || line.startsWith("*")) {
-        line = line + "\n";
-      }
-      if (codeBlock) {
-        curr = curr + "\n" + line;
-      } else {
-        if (line === "") {
-          lines.push(curr);
-          curr = "";
-        } else {
-          curr = curr + " " + line;
-        }
-      }
+    lines.push(`\`\`\`rascript\nclass ${key}\n\`\`\``);
+    let argStr = args.join(", ");
+    let prefix = "function ";
+    if (className !== "") {
+      prefix = `// class ${className}\nfunction `;
     }
-    if (curr !== "") {
-      lines.push(curr);
-    }
-    if (codeBlock) {
-      lines.push("```");
-    }
+    lines.push(`\`\`\`rascript\n${prefix}${key}(${argStr})\n\`\`\``);
+    let comments = parseCommentText(text);
+    lines = lines.concat(comments);
+    return {
+      key: key,
+      index: index,
+      type: type,
+      className: className,
+      hover: new vscode.Hover(lines),
+      args: args,
+      lines: lines,
+    };
   }
-  if (docUrl !== "") {
-    lines.push("---");
-    lines.push(`[Wiki link for \`${key}()\`](${docUrl})`);
-  }
-
-  return {
-    key: key,
-    index: index,
-    className: className,
-    hover: new vscode.Hover(lines),
-    args: args,
-    lines: lines,
-  };
+  return null;
 }
 
 export function parseDocument(
@@ -534,11 +557,13 @@ export function parseDocument(
       fn.url,
       ...fn.args
     );
-    let definitions = words.get(fn.key);
-    if (definitions !== undefined) {
-      definitions.push(hover);
-    } else {
-      words.set(fn.key, [hover]);
+    if (hover !== null) {
+      let definitions = words.get(fn.key);
+      if (definitions !== undefined) {
+        definitions.push(hover);
+      } else {
+        words.set(fn.key, [hover]);
+      }
     }
 
     // Add completion data
@@ -559,11 +584,13 @@ export function parseDocument(
       "",
       ...classScope.constructorArgs
     );
-    let definitions = words.get(className);
-    if (definitions !== undefined) {
-      definitions.push(hover);
-    } else {
-      words.set(className, [hover]);
+    if (hover !== null) {
+      let definitions = words.get(className);
+      if (definitions !== undefined) {
+        definitions.push(hover);
+      } else {
+        words.set(className, [hover]);
+      }
     }
 
     // add completion info
@@ -604,11 +631,13 @@ export function parseDocument(
       "",
       ...args
     );
-    let definitions = words.get(m[2]);
-    if (definitions !== undefined) {
-      definitions.push(hover);
-    } else {
-      words.set(m[2], [hover]);
+    if (hover !== null) {
+      let definitions = words.get(m[2]);
+      if (definitions !== undefined) {
+        definitions.push(hover);
+      } else {
+        words.set(m[2], [hover]);
+      }
     }
 
     // add completion info

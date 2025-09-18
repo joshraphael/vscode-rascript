@@ -5,19 +5,28 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [[0.3.2](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.3.2)] - 2025-XX-XX
+## [[0.4.0](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.4.0)] - 2025-09-18
 
-[diff](https://github.com/joshraphael/vscode-rascript/compare/v0.3.1...v0.3.2)
+[diff](https://github.com/joshraphael/vscode-rascript/compare/v0.3.1...v0.4.0)
 
 ### Added
+
+- New built-in function definition `achievement_set()`
 
 ### Changed
 
 - Syntax highlighting to use upstream [rascript-syntax](https://github.com/joshraphael/rascript-syntax) repo
-- Bug involving incorrect comment bounds detected for hover, definition and completion data
 - Unify document parser to align with language server
+- `achievement()` built-in function definition to support new `set` parameter
+- `leaderboard()` built-in function definition to support new `set` parameter
 
 ### Removed
+
+### Fixed
+
+- Bug involving incorrect comment bounds detected for hover, definition and completion data
+
+### Security
 
 ## [[0.3.1](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.3.1)] - 2025-08-07
 
@@ -28,9 +37,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Allow function names, parameters class names, and variables to start with an underscore
-- Fix extension package distribution pipeline
 
 ### Removed
+
+### Fixed
+
+- Extension package distribution pipeline
+
+### Security
 
 ## [[0.3.0](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.3.0)] - 2025-08-03
 
@@ -46,11 +60,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Fixed code jumping, hover text, and code completion to ignore any functions or classes defined in a comment
-- Duplicate function and variable names being show in auto completion
 - Improved illegal name detection on functions and parameters
-- Bump dependencies to fix multiple vulnerabilities [#3](https://github.com/joshraphael/vscode-rascript/security/dependabot/3), [#4](https://github.com/joshraphael/vscode-rascript/security/dependabot/4), [#5](https://github.com/joshraphael/vscode-rascript/security/dependabot/5), [#7](https://github.com/joshraphael/vscode-rascript/security/dependabot/7), [#10](https://github.com/joshraphael/vscode-rascript/security/dependabot/10)
 
 ### Removed
+
+### Fixed
+
+- Duplicate function and variable names being show in auto completion
+
+### Security
+
+- Bump dependencies to fix multiple vulnerabilities [#3](https://github.com/joshraphael/vscode-rascript/security/dependabot/3), [#4](https://github.com/joshraphael/vscode-rascript/security/dependabot/4), [#5](https://github.com/joshraphael/vscode-rascript/security/dependabot/5), [#7](https://github.com/joshraphael/vscode-rascript/security/dependabot/7), [#10](https://github.com/joshraphael/vscode-rascript/security/dependabot/10)
 
 ## [[0.2.4](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.2.4)] - 2025-06-16
 
@@ -64,6 +84,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+### Fixed
+
+### Security
+
 ## [[0.2.3](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.2.3)] - 2025-06-15
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.2.2...v0.2.3)
@@ -75,6 +99,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - File system check for language server before launch causing extension to not activate
+
+### Fixed
+
+### Security
 
 ## [[0.2.2](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.2.2)] - 2025-06-15
 
@@ -88,6 +116,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+### Fixed
+
+### Security
+
 ## [[0.2.1](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.2.1)] - 2025-06-14
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.2.0...v0.2.1)
@@ -100,6 +132,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+### Fixed
+
+### Security
+
 ## [[0.2.0](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.2.0)] - 2025-06-14
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.1.3...v0.2.0)
@@ -110,9 +146,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bump `@vscode/test-web` to version 0.0.70 ([security vulnerability](https://github.com/joshraphael/vscode-rascript/security/dependabot/2))
-
 ### Removed
+
+### Fixed
+
+### Security
+
+- Bump `@vscode/test-web` to version 0.0.70 ([security vulnerability](https://github.com/joshraphael/vscode-rascript/security/dependabot/2))
 
 ## [[0.1.3](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.1.3)] - 2025-06-05
 
@@ -125,6 +165,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Removed
+
+### Fixed
+
+### Security
 
 ## [[0.1.2](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.1.2)] - 2025-05-27
 
@@ -139,9 +183,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bump `@vscode/test-web` to version 0.0.69 ([security vulnerability](https://github.com/joshraphael/vscode-rascript/security/dependabot/1))
-
 ### Removed
+
+### Fixed
+
+### Security
+
+- Bump `@vscode/test-web` to version 0.0.69 ([security vulnerability](https://github.com/joshraphael/vscode-rascript/security/dependabot/1))
 
 ## [[0.1.1](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.1.1)] - 2025-03-01
 
@@ -157,6 +205,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+### Fixed
+
+### Security
+
 ## [[0.1.0](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.1.0)] - 2025-02-28
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.0.4...v0.1.0)
@@ -170,6 +222,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hover box to support markdown tables
 
 ### Removed
+
+### Fixed
+
+### Security
 
 ## [[0.0.4](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.0.4)] - 2025-02-25
 
@@ -185,6 +241,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Removed
+
+### Fixed
+
+### Security
 
 ## [[0.0.3](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.0.3)] - 2025-02-24
 
@@ -205,6 +265,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+### Fixed
+
+### Security
+
 ## [[0.0.2](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.0.2)] - 2025-02-23
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.0.1...v0.0.2)
@@ -217,6 +281,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Removed
+
+### Fixed
+
+### Security
 
 ## [[0.0.1](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.0.1)] - 2025-02-22
 
@@ -242,3 +310,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Removed
+
+### Fixed
+
+### Security
