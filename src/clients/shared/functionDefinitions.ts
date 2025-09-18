@@ -615,7 +615,7 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
       "modified",
       "badge",
       "type",
-      "set"
+      "set",
     ],
     commentDoc: [
       "// Defines a new achievement with the specified `title` (string), `description` (string), `points` (integer), and `trigger`.",
@@ -667,12 +667,7 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
   {
     key: "achievement_set",
     url: "https://github.com/Jamiras/RATools/wiki/Achievement-Functions#achievement_settitle-typebonus-id0-game_id0",
-    args: [
-      "title",
-      "type",
-      "id",
-      "game_id"
-    ],
+    args: ["title", "type", "id", "game_id"],
     commentDoc: [
       "// Defines a new achievement set (subset) with the specified `title`.",
       "// ",
@@ -687,11 +682,11 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
       "// #### Example",
       "// ",
       "// ```rascript",
-      "// bonus_set = achievement_set(\"Bonus\")",
-      "// achievement(\"Impossible\", \"Complete the game without dying\", 100, set=bonus_set,",
+      '// bonus_set = achievement_set("Bonus")',
+      '// achievement("Impossible", "Complete the game without dying", 100, set=bonus_set,',
       "//     trigger = complete_game() && never(lives() < prev(lives))",
-      "// ```"
-    ]
+      "// ```",
+    ],
   },
   {
     key: "rich_presence_display",
@@ -851,7 +846,7 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
       "format",
       "lower_is_better",
       "id",
-      "set"
+      "set",
     ],
     commentDoc: [
       "// Defines a leaderboard. `title` and `description` must be strings.",
