@@ -5,6 +5,22 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [[0.4.1](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.4.1)] - 2025-XX-XX
+
+[diff](https://github.com/joshraphael/vscode-rascript/compare/v0.4.0...v0.4.1)
+
+### Added
+
+### Changed
+
+### Removed
+
+### Fixed
+
+### Security
+
+- Bump vscode/test-web dependency to fix multiple vulnerabilities [#11](https://github.com/joshraphael/vscode-rascript/security/dependabot/11), [#12](https://github.com/joshraphael/vscode-rascript/security/dependabot/12), [#13](https://github.com/joshraphael/vscode-rascript/security/dependabot/13)
+
 ## [[0.4.0](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.4.0)] - 2025-09-18
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.3.1...v0.4.0)
