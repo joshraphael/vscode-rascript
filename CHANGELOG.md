@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- Bump @vscode/test-cli to 0.0.12 to fix vulnerability [#17](https://github.com/joshraphael/vscode-rascript/security/dependabot/17)
+- Bump @vscode/test-cli to 0.0.12 to fix vulnerability [#16](https://github.com/joshraphael/vscode-rascript/security/dependabot/16), and [#17](https://github.com/joshraphael/vscode-rascript/security/dependabot/17)
+- Bump eslint to 9.39.1 to fix vulnerability [#16](https://github.com/joshraphael/vscode-rascript/security/dependabot/16)
 
 ## [[0.4.1](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.4.1)] - 2025-10-22
 
