@@ -14,7 +14,7 @@ jobs:
       - run: npm install
       - run: npm run pretest
       - name: Test Publish Extension
-        uses: HaaLeo/publish-vscode-extension@v1
+        uses: HaaLeo/publish-vscode-extension@v2
         id: publishToOpenVSX
         with:
           pat: secret_key
