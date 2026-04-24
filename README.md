@@ -38,6 +38,30 @@ Windows:
 C:\Users\joshraphael\rascript-language-server_v0.0.1_win-x64.exe
 ```
 
+## Token Generation
+### OpenVSX
+1. Navigate to the [OpenVSX](https://open-vsx.org/) homepage
+2. Select the user icon in the top right hand corner
+3. Select `Settings`
+4. Select `Access Tokens`
+5. Select `Generate New Token`
+6. Enter a name you can recognize
+7. Click `Generate Token` and copy the token to your deployment script
+
+### VSCode Marketplace
+1. Navigate to the [Azure DevOps](https://dev.azure.com) dashboard and log into your profile.
+2. Select the user icon in the top right hand corner
+3. Select `Personal access tokens`
+4. In the `Access scope` dropdown, select `All accessible organizations`
+5. At this point you can tell if your token has expired or not if you do not see any tokens.
+6. Generate a new token by clicking the blue `New Token` button
+7. Enter a name you can recognize
+8. In the `Organization` drop down select `All accessible organizations`
+9. Expiration set to specific date (one year max allowed)
+10. In the `Scopes` choice select `Custom defined`
+11. Find the `Marketplace` scope section and select only `Manage`
+12. Click `Create` and copy the token to your deployment script
+
 ## Make commands
 
 |Title|Command|Parameters|Description|
