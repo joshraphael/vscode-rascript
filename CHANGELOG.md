@@ -5,13 +5,18 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [[0.4.2](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.4.2)] - 2025-XX-XX
+## [[0.4.2](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.4.2)] - 2026-04-24
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.4.1...v0.4.2)
 
 ### Added
 
+- Token generation guide in README.md
+
 ### Changed
+
+- Bump rascript-syntax to v0.4.0
+- Github actions to use Node 24
 
 ### Removed
 
@@ -19,8 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- Bump @vscode/test-cli to 0.0.12 to fix vulnerability [#16](https://github.com/joshraphael/vscode-rascript/security/dependabot/16), and [#17](https://github.com/joshraphael/vscode-rascript/security/dependabot/17)
-- Bump eslint to 9.39.1 to fix vulnerability [#16](https://github.com/joshraphael/vscode-rascript/security/dependabot/16)
+- Bump dependencies to fix multiple vulnerabilities [#16](https://github.com/joshraphael/vscode-rascript/security/dependabot/16), [#17](https://github.com/joshraphael/vscode-rascript/security/dependabot/17), [#19](https://github.com/joshraphael/vscode-rascript/security/dependabot/19), [#20](https://github.com/joshraphael/vscode-rascript/security/dependabot/20), [#21](https://github.com/joshraphael/vscode-rascript/security/dependabot/21), [#22](https://github.com/joshraphael/vscode-rascript/security/dependabot/22), [#25](https://github.com/joshraphael/vscode-rascript/security/dependabot/25), [#26](https://github.com/joshraphael/vscode-rascript/security/dependabot/26), [#27](https://github.com/joshraphael/vscode-rascript/security/dependabot/27), [#28](https://github.com/joshraphael/vscode-rascript/security/dependabot/28), [#29](https://github.com/joshraphael/vscode-rascript/security/dependabot/29), [#30](https://github.com/joshraphael/vscode-rascript/security/dependabot/30), [#31](https://github.com/joshraphael/vscode-rascript/security/dependabot/31), [#32](https://github.com/joshraphael/vscode-rascript/security/dependabot/32), [#33](https://github.com/joshraphael/vscode-rascript/security/dependabot/33), [#34](https://github.com/joshraphael/vscode-rascript/security/dependabot/34), [#35](https://github.com/joshraphael/vscode-rascript/security/dependabot/35), [#36](https://github.com/joshraphael/vscode-rascript/security/dependabot/36), [#37](https://github.com/joshraphael/vscode-rascript/security/dependabot/37), [#38](https://github.com/joshraphael/vscode-rascript/security/dependabot/38), [#39](https://github.com/joshraphael/vscode-rascript/security/dependabot/39), [#40](https://github.com/joshraphael/vscode-rascript/security/dependabot/40), [#41](https://github.com/joshraphael/vscode-rascript/security/dependabot/41), [#42](https://github.com/joshraphael/vscode-rascript/security/dependabot/42), [#43](https://github.com/joshraphael/vscode-rascript/security/dependabot/43)
 
 ## [[0.4.1](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.4.1)] - 2025-10-22
 
