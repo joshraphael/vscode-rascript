@@ -8,7 +8,7 @@ setup: syntax
 syntax:
 	rm -rf syntaxes
 	mkdir -p syntaxes
-	wget -O syntaxes/rascript.tmLanguage.json 'https://github.com/joshraphael/rascript-syntax/releases/download/v0.4.0/rascript.tmLanguage.json'
+	wget -O syntaxes/rascript.tmLanguage.json 'https://github.com/joshraphael/rascript-syntax/releases/download/v0.4.1/rascript.tmLanguage.json'
 
 check: style
 	npm run pretest
