@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 async function setup(
   context: vscode.ExtensionContext,
-  rascriptLanguageServer: string
+  rascriptLanguageServer: string,
 ) {
   const fileUri = vscode.Uri.file(rascriptLanguageServer);
   if (rascriptLanguageServer === undefined || rascriptLanguageServer === "") {
@@ -30,7 +30,7 @@ async function setup(
 
 function languageServer(
   context: vscode.ExtensionContext,
-  rascriptLanguageServer: string
+  rascriptLanguageServer: string,
 ) {
   let serverOptions: ServerOptions = {
     run: { command: rascriptLanguageServer },
@@ -56,7 +56,7 @@ function languageServer(
     "rascript-language-server",
     "RAScript Language Server",
     serverOptions,
-    clientOptions
+    clientOptions,
   );
 
   // Start the client. This will also launch the server
@@ -64,12 +64,12 @@ function languageServer(
     .start()
     .then(() => {
       vscode.window.showInformationMessage(
-        "Language Server started from: " + rascriptLanguageServer
+        "Language Server started from: " + rascriptLanguageServer,
       );
     })
     .catch((error) => {
       vscode.window.showInformationMessage(
-        "Failed to start language server: " + error
+        "Failed to start language server: " + error,
       );
       localExtension(context);
     });

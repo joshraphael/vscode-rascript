@@ -5,7 +5,7 @@ import * as models from "./models";
 export function definitionProvider(
   document: vscode.TextDocument,
   position: vscode.Position,
-  token: vscode.CancellationToken
+  token: vscode.CancellationToken,
 ) {
   let text = document.getText();
   const range = document.getWordRangeAtPosition(position);
@@ -30,8 +30,8 @@ export function definitionProvider(
       parser.classFilter(
         global,
         usingThis,
-        parser.detectClass(origWordOffset, parsedDocument.classes)
-      )
+        parser.detectClass(origWordOffset, parsedDocument.classes),
+      ),
     );
     // can only link to one location, so anything that has multiple definitions wont work for code jumping
     if (filteredList.length === 1) {

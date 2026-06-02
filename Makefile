@@ -1,8 +1,11 @@
+deps:
+	sudo apt-get install libflite1 libavif16 libmanette-0.2-0 libwoff1
+
 setup: syntax
 	rm -rf node_modules/
 	rm -rf out/
-	rm -f package-lock.json
-	npm install
+	rm -f pnpm-lock.yaml
+	pnpm install
 	pnpm compile
 
 syntax:
@@ -11,11 +14,11 @@ syntax:
 	wget -O syntaxes/rascript.tmLanguage.json 'https://github.com/joshraphael/rascript-syntax/releases/download/v0.4.1/rascript.tmLanguage.json'
 
 check: style
-	npm run pretest
+	pnpm run pretest
 
 style:
-	npm run format
-	npm run lint
+	pnpm run format
+	pnpm run lint
 
 tag-patch: check
 	bash scripts/update.sh --patch
@@ -29,6 +32,6 @@ tag-major: check
 publish:
 	git push --tags origin main
 
-browser:
-	npm run compile
-	npm run browser
+browser: deps
+	pnpm run compile
+	pnpm run browser

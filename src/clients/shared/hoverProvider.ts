@@ -3,7 +3,7 @@ import * as parser from "./parser";
 
 export function hoverProvider(
   document: vscode.TextDocument,
-  position: vscode.Position
+  position: vscode.Position,
 ) {
   let parsedDocument = parser.parseDocument(document);
   const range = document.getWordRangeAtPosition(position);
@@ -40,7 +40,7 @@ export function hoverProvider(
     const [fn, cls] = parser.getWordType(
       document,
       startingOffset,
-      endingOffset
+      endingOffset,
     );
     if (!fn && !cls) {
       // only provide hover data for classes and functions
