@@ -11,12 +11,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - run: make syntax
-      - run: npm ci
+      - run: pnpm ci
+      - run: pnpm run pretest
       - name: Publish to Open VSX Registry
         uses: HaaLeo/publish-vscode-extension@v2
         id: publishToOpenVSX
