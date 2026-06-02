@@ -8,7 +8,7 @@ export function localExtension(context: vscode.ExtensionContext) {
     provideDefinition(
       document: vscode.TextDocument,
       position: vscode.Position,
-      token: vscode.CancellationToken
+      token: vscode.CancellationToken,
     ) {
       return definitionProvider(document, position, token);
     },
@@ -25,11 +25,11 @@ export function localExtension(context: vscode.ExtensionContext) {
     {
       provideCompletionItems(
         document: vscode.TextDocument,
-        position: vscode.Position
+        position: vscode.Position,
       ) {
         return completionItemsProvider(document, position);
       },
-    }
+    },
   );
 
   context.subscriptions.push(autocomplete, hover, definitions);

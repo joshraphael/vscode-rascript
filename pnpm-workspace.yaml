@@ -1,0 +1,19 @@
+allowBuilds:
+  '@playwright/browser-chromium': true
+minimumReleaseAgeExclude:
+  - '@playwright/test@1.61.0-alpha-2026-06-02'
+  - '@typescript-eslint/eslint-plugin@8.60.1'
+  - '@typescript-eslint/parser@8.60.1'
+  - '@typescript-eslint/project-service@8.60.1'
+  - '@typescript-eslint/scope-manager@8.60.1'
+  - '@typescript-eslint/tsconfig-utils@8.60.1'
+  - '@typescript-eslint/type-utils@8.60.1'
+  - '@typescript-eslint/types@8.60.1'
+  - '@typescript-eslint/typescript-estree@8.60.1'
+  - '@typescript-eslint/utils@8.60.1'
+  - '@typescript-eslint/visitor-keys@8.60.1'
+  - playwright-core@1.61.0-alpha-2026-06-02
+  - playwright@1.61.0-alpha-2026-06-02
+overrides:
+  'playwright-core': '^1.61.0-alpha-2026-06-02' # try removing once @vscode/test-web upgrades > 0.0.80
+  'glob': '^13.0.6' # try removing once @vscode/test-cli upgrades > 0.0.12

@@ -16,7 +16,7 @@ export const G_CLASS = "class";
 
 export function inCommentBound(
   index: number,
-  commentBounds: models.CommentBounds[]
+  commentBounds: models.CommentBounds[],
 ) {
   for (let i = 0; i < commentBounds.length; i++) {
     let bound = commentBounds[i];
@@ -57,7 +57,7 @@ export function createClassFunction(
 export function classFilter(
   global: boolean,
   usingThis: boolean,
-  className: string
+  className: string,
 ) {
   return function (el: models.ClassFunction) {
     if (global) {
@@ -72,7 +72,7 @@ export function classFilter(
 export function getWordType(
   document: vscode.TextDocument,
   startingOffset: number,
-  endingOffset: number
+  endingOffset: number,
 ): [boolean, boolean] {
   const text = document.getText();
   let fn = false;
@@ -105,7 +105,7 @@ export function getWordType(
 
 export function getScope(
   document: vscode.TextDocument,
-  startingOffset: number
+  startingOffset: number,
 ): [boolean, boolean] {
   // Determine if this function is part of a class or global function
   const text = document.getText();
@@ -230,7 +230,7 @@ export function countArgsAt(document: vscode.TextDocument, offset: number) {
 
 export function getCommentText(
   document: vscode.TextDocument,
-  pos: vscode.Position
+  pos: vscode.Position,
 ): string {
   let comment = "";
   let untrimmedComment = ""; // This holds a second copy of the comments with leading stars
@@ -336,7 +336,7 @@ export function getCommentText(
 
 export function detectClass(
   funcPos: number,
-  classData: Map<string, models.ClassScope>
+  classData: Map<string, models.ClassScope>,
 ) {
   for (const [className, classScope] of classData) {
     if (funcPos >= classScope.start && funcPos <= classScope.end) {
@@ -348,7 +348,7 @@ export function detectClass(
 
 export function getClassData(
   text: string,
-  commentBounds: models.CommentBounds[]
+  commentBounds: models.CommentBounds[],
 ): Map<string, models.ClassScope> {
   let classes = new Map<string, models.ClassScope>();
   let m: RegExpExecArray | null;
@@ -532,7 +532,7 @@ export function newHoverText(
 }
 
 export function parseDocument(
-  document: vscode.TextDocument
+  document: vscode.TextDocument,
 ): models.ParsedDocument {
   let text = document.getText();
   let commentBounds = getCommentBoundsList(document);
@@ -555,7 +555,7 @@ export function parseDocument(
       "",
       comment,
       fn.url,
-      ...fn.args
+      ...fn.args,
     );
     if (hover !== null) {
       let definitions = words.get(fn.key);
@@ -582,7 +582,7 @@ export function parseDocument(
       "",
       comment,
       "",
-      ...classScope.constructorArgs
+      ...classScope.constructorArgs,
     );
     if (hover !== null) {
       let definitions = words.get(className);
@@ -629,7 +629,7 @@ export function parseDocument(
       className,
       comment,
       "",
-      ...args
+      ...args,
     );
     if (hover !== null) {
       let definitions = words.get(m[2]);

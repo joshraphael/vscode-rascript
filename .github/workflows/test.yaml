@@ -6,16 +6,29 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: latest
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - run: make syntax
-      - run: npm install
-      - run: npm run pretest
-      - name: Test Publish Extension
+      - run: pnpm ci
+      - run: pnpm run pretest
+      - name: Test Publish to Open VSX Registry
         uses: HaaLeo/publish-vscode-extension@v2
         id: publishToOpenVSX
         with:
           pat: secret_key
+          dependencies: false
+          dryRun: true
+      - name: Test Publish to Visual Studio Marketplace
+        uses: HaaLeo/publish-vscode-extension@v2
+        with:
+          pat: secret_key
+          dependencies: false
+          registryUrl: https://marketplace.visualstudio.com
+          extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
           dryRun: true

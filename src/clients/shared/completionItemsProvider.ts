@@ -3,7 +3,7 @@ import * as parser from "./parser";
 
 export function completionItemsProvider(
   document: vscode.TextDocument,
-  position: vscode.Position
+  position: vscode.Position,
 ) {
   let parsedDocument = parser.parseDocument(document);
   let completionItems: vscode.CompletionItem[] = [];
@@ -14,13 +14,13 @@ export function completionItemsProvider(
   let variableSet: Set<string> = new Set(parsedDocument.completionVariables);
   variableSet.forEach((varName: string) => {
     completionItems.push(
-      parser.newCompletion(varName, vscode.CompletionItemKind.Variable)
+      parser.newCompletion(varName, vscode.CompletionItemKind.Variable),
     );
   });
   let classSet: Set<string> = new Set(parsedDocument.completionClasses);
   classSet.forEach((className: string) => {
     completionItems.push(
-      parser.newCompletion(className, vscode.CompletionItemKind.Class)
+      parser.newCompletion(className, vscode.CompletionItemKind.Class),
     );
   });
   return completionItems;
