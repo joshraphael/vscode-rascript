@@ -264,7 +264,7 @@ export const builtinFunctionDefinitions: readonly FunctionDefinition[] = [
       "// ",
       "// ```rascript",
       "// start_of_struct = remembered(really_long_pointer_chain())",
-      "// achievement(\"Example\", \"Example\", 5,",
+      '// achievement("Example", "Example", 5,',
       "//     trigger = dword(start_of_struct + 8) == 6 &&",
       "//               dword(start_of_struct) == 16 &&",
       "//               dword(start_of_struct + 20) > prev(dword(start_of_struct + 20))",
