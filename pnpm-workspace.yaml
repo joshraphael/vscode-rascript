@@ -5,3 +5,5 @@ minimumReleaseAgeExclude:
 overrides:
   'playwright-core': '^1.62.1' # try removing once @vscode/test-cli upgrades > 0.0.15
   'serialize-javascript': '^7.0.5' # try removing once @vscode/test-cli upgrades > 0.0.15
+  'js-yaml': '^4.3.1' # try removing once @vscode/test-cli upgrades > 0.0.15
+  'morgan': '^1.12.0' # try removing once @vscode/test-web upgrades > 0.0.81
