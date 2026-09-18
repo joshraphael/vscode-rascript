@@ -5,7 +5,7 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [[0.5.3](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.5.3)] - 2026-MM-DD
+## [[0.5.3](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.5.3)] - 2026-09-18
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.5.2...v0.5.3)
 
@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- Bump dependencies to fix multiple vulnerabilities [#54](https://github.com/joshraphael/vscode-rascript/security/dependabot/54), [#55](https://github.com/joshraphael/vscode-rascript/security/dependabot/55), [#56](https://github.com/joshraphael/vscode-rascript/security/dependabot/56), [#57](https://github.com/joshraphael/vscode-rascript/security/dependabot/57), [#58](https://github.com/joshraphael/vscode-rascript/security/dependabot/58), [#60](https://github.com/joshraphael/vscode-rascript/security/dependabot/60), [#61](https://github.com/joshraphael/vscode-rascript/security/dependabot/61), [#62](https://github.com/joshraphael/vscode-rascript/security/dependabot/62)
+- Bump dependencies to fix multiple vulnerabilities [#54](https://github.com/joshraphael/vscode-rascript/security/dependabot/54), [#55](https://github.com/joshraphael/vscode-rascript/security/dependabot/55), [#56](https://github.com/joshraphael/vscode-rascript/security/dependabot/56), [#57](https://github.com/joshraphael/vscode-rascript/security/dependabot/57), [#58](https://github.com/joshraphael/vscode-rascript/security/dependabot/58), [#60](https://github.com/joshraphael/vscode-rascript/security/dependabot/60), [#61](https://github.com/joshraphael/vscode-rascript/security/dependabot/61), [#62](https://github.com/joshraphael/vscode-rascript/security/dependabot/62), [#63](https://github.com/joshraphael/vscode-rascript/security/dependabot/63), [#64](https://github.com/joshraphael/vscode-rascript/security/dependabot/64), [#65](https://github.com/joshraphael/vscode-rascript/security/dependabot/65), [#66](https://github.com/joshraphael/vscode-rascript/security/dependabot/66), [#67](https://github.com/joshraphael/vscode-rascript/security/dependabot/67), [#68](https://github.com/joshraphael/vscode-rascript/security/dependabot/68)
 
 ## [[0.5.2](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.5.2)] - 2026-06-10
 
