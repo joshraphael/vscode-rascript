@@ -1,12 +1,13 @@
 deps:
 	sudo apt-get install libflite1 libavif16 libmanette-0.2-0 libwoff1
+	npm install -g @vscode/vsce
 
 setup: syntax
 	rm -rf node_modules/
 	rm -rf out/
-	rm -f pnpm-lock.yaml
-	pnpm install
-	pnpm compile
+	rm -f package-lock.json
+	npm install
+	npm run compile
 
 syntax:
 	rm -rf syntaxes
@@ -14,11 +15,12 @@ syntax:
 	wget -O syntaxes/rascript.tmLanguage.json 'https://github.com/joshraphael/rascript-syntax/releases/download/v0.4.2/rascript.tmLanguage.json'
 
 check: style
-	pnpm run pretest
+	npm run pretest
+	npm audit fix
 
 style:
-	pnpm run format
-	pnpm run lint
+	npm run format
+	npm run lint
 
 tag-patch: check
 	bash scripts/update.sh --patch
@@ -33,5 +35,9 @@ publish:
 	git push --tags origin main
 
 browser: deps
-	pnpm run compile
-	pnpm run browser
+	npm run compile
+	npm run browser
+
+install: setup
+	vsce package -o rascript.vsix
+	codium --install-extension rascript.vsix
