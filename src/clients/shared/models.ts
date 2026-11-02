@@ -34,6 +34,7 @@ export interface HoverData {
   className: string;
   hover: vscode.Hover;
   args: string[];
+  requiredArgs: number;
   lines: string[];
 }
 

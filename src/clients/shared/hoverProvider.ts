@@ -77,7 +77,10 @@ export function hoverProvider(
           // otherwise just append if its a class
           if (fn) {
             let numArgs = parser.countArgsAt(document, endingOffset);
-            if (numArgs === definition.args.length) {
+            if (
+              numArgs >= definition.requiredArgs &&
+              numArgs <= definition.args.length
+            ) {
               filteredDefinitions.push(definition);
             }
           } else {

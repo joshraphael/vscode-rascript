@@ -2,8 +2,7 @@ import * as vscode from "vscode";
 import * as models from "./models";
 import { builtinFunctionDefinitions } from "./functionDefinitions";
 
-export const G_FUNCTION_DEFINITION =
-  /(\bfunction\b)[\t ]*([a-zA-Z_][\w]*)[\t ]*\(([^\(\)]*)\)/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions regex
+export const G_FUNCTION_DEFINITION = /(\bfunction\b)\s*([a-zA-Z_][\w]*)\s*\(/g; // keep in sync with syntax file rascript.tmLanguage.json #function-definitions begin regex, the parameter list is parsed by parseArgList
 export const G_CLASS_DEFINITION = /(\bclass\b)[\t ]*([a-zA-Z_][\w]*)/g; // keep in sync with syntax file rascript.tmLanguage.json #class-definitions regex
 export const G_COMMENTS = new RegExp("^//.*$", "g");
 
@@ -206,26 +205,74 @@ export function getCommentBoundsList(document: vscode.TextDocument) {
   return commentBounds;
 }
 
+export function parseArgList(
+  text: string,
+  openIndex: number,
+): { args: string[]; end: number } | null {
+  let args: string[] = [];
+  let current = "";
+  let depth = 0;
+  let i = openIndex + 1;
+  while (i < text.length) {
+    let c = text[i];
+    if (c === '"') {
+      // copy the whole string, including escaped characters
+      let start = i;
+      i++;
+      while (i < text.length && text[i] !== '"') {
+        if (text[i] === "\\") {
+          i++;
+        }
+        i++;
+      }
+      current += text.slice(start, i + 1);
+    } else if (c === "/" && text[i + 1] === "/") {
+      // skip line comment
+      while (i < text.length && text[i] !== "\n") {
+        i++;
+      }
+    } else if (c === "/" && text[i + 1] === "*") {
+      // skip block comment
+      let close = text.indexOf("*/", i + 2);
+      i = close === -1 ? text.length : close + 1;
+    } else if (c === "(" || c === "[" || c === "{") {
+      depth++;
+      current += c;
+    } else if ((c === ")" || c === "]" || c === "}") && depth > 0) {
+      depth--;
+      current += c;
+    } else if (c === ")") {
+      args.push(current.trim());
+      return {
+        args: args.filter((el) => el !== ""),
+        end: i,
+      };
+    } else if (c === "," && depth === 0) {
+      args.push(current.trim());
+      current = "";
+    } else {
+      current += c;
+    }
+    i++;
+  }
+  return null;
+}
+
 export function countArgsAt(document: vscode.TextDocument, offset: number) {
   let text = document.getText();
-  let count = 0;
-  if (text[offset] === "(") {
-    offset++;
-    while (offset < text.length) {
-      if (text[offset] === ")") {
-        break;
-      }
-      if (count === 0) {
-        count = 1;
-      } else {
-        if (text[offset] === ",") {
-          count++;
-        }
-      }
-      offset++;
-    }
+  if (text[offset] !== "(") {
+    return 0;
   }
-  return count;
+  let list = parseArgList(text, offset);
+  if (list === null) {
+    return 0;
+  }
+  return list.args.length;
+}
+
+// number of arguments without a default value
+export function countRequiredArgs(args: string[]) {
+  return args.filter((el) => !/=(?!=)/.test(el)).length;
 }
 
 export function getCommentText(
@@ -505,6 +552,7 @@ export function newHoverText(
       className: className,
       hover: new vscode.Hover(lines),
       args: args,
+      requiredArgs: countRequiredArgs(args),
       lines: lines,
     };
   }
@@ -525,6 +573,7 @@ export function newHoverText(
       className: className,
       hover: new vscode.Hover(lines),
       args: args,
+      requiredArgs: countRequiredArgs(args),
       lines: lines,
     };
   }
@@ -607,11 +656,12 @@ export function parseDocument(
     let className = detectClass(m.index, classes);
     let pos = document.positionAt(m.index);
     let comment = getCommentText(document, pos);
+    let argList = parseArgList(text, m.index + m[0].length - 1);
+    if (argList === null) {
+      continue;
+    }
     let list = functionDefinitions.get(m[2]);
-    let a = m[3].split(",").map((s) => s.trim());
-    var args = a.filter(function (el) {
-      return el !== null && el !== "" && el !== undefined;
-    });
+    let args = argList.args;
 
     // add definition info
     let item = createClassFunction(className, m[2], pos, ...args);
