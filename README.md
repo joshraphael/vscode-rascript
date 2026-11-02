@@ -49,14 +49,14 @@ C:\Users\joshraphael\rascript-language-server_v0.0.1_win-x64.exe
 7. Click `Generate Token` and copy the token to your deployment script
 
 ### VSCode Marketplace
-1. Navigate to the [Azure DevOps](https://dev.azure.com) dashboard and log into your profile.
+1. Navigate to the [Azure DevOps](https://aex.dev.azure.com) dashboard and log into your profile.
 2. Select the user icon in the top right hand corner
 3. Select `Personal access tokens`
-4. In the `Access scope` dropdown, select `All accessible organizations`
+4. In the `Access scope` dropdown, select `joshraphael`
 5. At this point you can tell if your token has expired or not if you do not see any tokens.
 6. Generate a new token by clicking the blue `New Token` button
 7. Enter a name you can recognize
-8. In the `Organization` drop down select `All accessible organizations`
+8. In the `Organization` drop down select `joshraphael`
 9. Expiration set to specific date (one year max allowed)
 10. In the `Scopes` choice select `Custom defined`
 11. Find the `Marketplace` scope section and select only `Manage`
