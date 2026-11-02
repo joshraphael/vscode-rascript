@@ -21,9 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Hover text missing for functions with default parameter values containing parentheses, brackets or commas
+- Hover text missing on class function calls that omit defaulted parameters
+
 ### Security
 
-- Bump webpack to 3.1.9 to fix multiple vulnerabilities [#69](https://github.com/joshraphael/vscode-rascript/security/dependabot/69), [#70](https://github.com/joshraphael/vscode-rascript/security/dependabot/70), [#71](https://github.com/joshraphael/vscode-rascript/security/dependabot/71), [#72](https://github.com/joshraphael/vscode-rascript/security/dependabot/72)
+- Bump dependencies to fix multiple vulnerabilities [#69](https://github.com/joshraphael/vscode-rascript/security/dependabot/69), [#70](https://github.com/joshraphael/vscode-rascript/security/dependabot/70), [#71](https://github.com/joshraphael/vscode-rascript/security/dependabot/71), [#72](https://github.com/joshraphael/vscode-rascript/security/dependabot/72), [#74](https://github.com/joshraphael/vscode-rascript/security/dependabot/74)
 
 ## [[0.5.6](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.5.6)] - 2026-09-26
 
