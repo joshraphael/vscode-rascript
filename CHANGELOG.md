@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - Bump dependencies to fix multiple vulnerabilities [#69](https://github.com/joshraphael/vscode-rascript/security/dependabot/69), [#70](https://github.com/joshraphael/vscode-rascript/security/dependabot/70), [#71](https://github.com/joshraphael/vscode-rascript/security/dependabot/71), [#72](https://github.com/joshraphael/vscode-rascript/security/dependabot/72), [#74](https://github.com/joshraphael/vscode-rascript/security/dependabot/74)
+- Bump glob to `14.0.3` to resolve `npm audit` vulnerability
 
 ## [[0.5.6](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.5.6)] - 2026-09-26
 
