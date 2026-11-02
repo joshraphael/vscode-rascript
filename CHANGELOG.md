@@ -5,7 +5,7 @@ All notable changes to the "vscode-rascript" extension will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [[0.5.7](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.5.7)] - 2026-MM-DD
+## [[0.5.7](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.5.7)] - 2026-11-02
 
 [diff](https://github.com/joshraphael/vscode-rascript/compare/v0.5.6...v0.5.7)
 
@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bump rascript-syntax to v0.4.6
+- Bump rascript-syntax to v0.5.1
 
 ### Removed
 
@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+- Bump webpack to 3.1.9 to fix multiple vulnerabilities [#69](https://github.com/joshraphael/vscode-rascript/security/dependabot/69), [#70](https://github.com/joshraphael/vscode-rascript/security/dependabot/70), [#71](https://github.com/joshraphael/vscode-rascript/security/dependabot/71), [#72](https://github.com/joshraphael/vscode-rascript/security/dependabot/72)
 
 ## [[0.5.6](https://github.com/joshraphael/vscode-rascript/releases/tag/v0.5.6)] - 2026-09-26
 
